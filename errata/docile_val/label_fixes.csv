@@ -1,0 +1,483 @@
+split,file,field,label,new,confidence,reason
+bench,6d5fa440d315476b8a1bdd1f.pdf,document_id,SO73892-IN,S073892-IN,low,"The invoice identifier is printed as S073892-IN with a zero after S, not SO73892-IN with the letter O."
+bench,c939c1f66fb24089b09d11e4.pdf,vendor_address,"Smart Media Group
+Alexandria",,high,"The text lists Smart Media Group as COMPANY and Alexandria as OFFICE, not as a vendor address, and no issuing vendor/supplier address is provided."
+bench,0e9fa414a3054e839c72685a.pdf,tax_detail_net,$0.00,,high,"The document has no tax-detail net amount printed: $0.00 is the sales tax amount, while $455.00 is the overall sale amount."
+bench,5bcfc61f0b41457599e3794c.pdf,vendor_address,"BANK OF AMERICA CORPORATE CENTER
+100 NORTH TRYON STREET, 42ND FLOOR
+CHARLOTTE, NORTH CAROLINA 25202•400","BANK OF AMERICA CORPORATE CENTER
+100 NORTH TRYON STREET, 42ND FLOOR
+CHARLOTTE NORTH CAROLINA 28202-4000",high,"The label's ZIP code 25202•400 is not printed; page 1 gives the vendor address with ZIP 28202-4000, while the extractor includes office-city names rather than the mailing address."
+bench,aa41cb6460d54132a78b048b.pdf,customer_billing_address,"4Q20 RD
+PORTLAND, ME","PHD, 195 BROADWAY, 5FL, NEW YORK, NY 10007, ATTN: MEDIA REC DEPT/FIN SHARED SRVC",high,"The label combines an estimate code with the market location rather than an address, while the document explicitly instructs vendors to use PHD’s New York address on invoices."
+bench,aa41cb6460d54132a78b048b.pdf,vendor_name,SPOT RADIO,WBLM-F,high,"“SPOT RADIO” identifies the media type, not a company, while “WBLM-F” is the station supplying the advertising spots."
+bench,6791ce7f9abe4029852b9b31.pdf,document_id,735194,5782-1,high,"The document explicitly identifies 5782-1 as the Invoice Number, while 735194 is the check number rather than the document identifier."
+bench,80c86e88f7d647908c5e625e.pdf,document_id,027,205027,high,"The full document text prints invoice NUMBER as 205027 (the supplied location snippet reads 305027), but neither supports the truncated label 027."
+bench,90420109c4434c8db42f3e92.pdf,vendor_name,Ohio Midland Newsgroup IIc,Ohio Midland Newsgroup llc,low,"The document heading names the vendor as “Ohio Midland Newsgroup llc,” not the label’s “Ohio Midland Newsgroup IIc.”"
+bench,90420109c4434c8db42f3e92.pdf,customer_billing_name,WCDK,Littlejohn,high,"Littlejohn is identified as the advertiser and billed customer, while WCDK is explicitly identified as the station."
+bench,4f565e7e7c3442cb991ce6b9.pdf,vendor_address,"StateNets Platinum
+Attn: Dave Martin
+2601 Northwind Drive
+Richmond VA 23233","505 Hobbs Road, Jefferson City, MO 65109",high,"Learfield is the issuing supplier and prints its address in the footer, while the labeled StateNets Platinum address belongs to the agency/contact recipient."
+bench,4f565e7e7c3442cb991ce6b9.pdf,customer_billing_address,"Learfield Communications, Inc., 505 Hobbs Road, Jefferson City, MO 65109","StateNets Platinum, Attn: Dave Martin, 2601 Northwind Drive, Richmond VA 23233",high,"The StateNets address is the customer/agency address block, while the labeled Learfield address is the broadcaster's footer address."
+bench,4f565e7e7c3442cb991ce6b9.pdf,vendor_name,StateNets Platinum,"Learfield Communications, Inc.",high,"Learfield Communications, Inc. is identified in the header and corporate footer as the issuer, while StateNets Platinum appears in the agency contact block."
+bench,4f565e7e7c3442cb991ce6b9.pdf,customer_billing_name,"Learfield Communications, Inc.",StateNets Platinum,high,"StateNets Platinum appears in the customer address block, while Learfield Communications, Inc. is the issuing organisation identified in the footer and sales office."
+bench,e2be09a5fa09446887751a67.pdf,vendor_address,"KENNEDY COVINGTON LOBDELL & HICKMAN, L.L.P.
+ATTORNEYS AT LAW
+Bank of America Corporate Center
+Suite 4200
+100 Norh Tryon Street
+Charlotte, North Carolina 28202-4006","Bank of America Corporate Center
+Suite 4200
+100 North Tryon Street
+Charlotte, North Carolina 28202-4006",high,"The vendor address prints '100 North Tryon Street,' whereas the label misspells 'North' as 'Norh'."
+bench,e2be09a5fa09446887751a67.pdf,customer_billing_address,"nda R. Alpert
+rst Vice President and Associate
+eneral Counsel
+alomon Smith Barney Inc.
+ch World Trade Center, 31st Floor
+ew York, NY 10048","Linda R. Alpert
+First Vice President and Associate
+General Counsel
+Salomon Smith Barney Inc.
+5th World Trade Center, 31st Floor
+New York, NY 10048",high,"The full text prints the complete billing block with 5th World Trade Center, whereas the label truncates multiple lines and the extractor incorrectly uses 2 World Trade Center."
+bench,e2be09a5fa09446887751a67.pdf,customer_billing_name,"nda R. Alpert
+rst Vice President and Associate
+eneral Counsel
+alomon Smith Barney Inc.",Salomon Smith Barney Inc.,high,The billed customer is Salomon Smith Barney Inc.; the label contains truncated names and titles from the billing contact block rather than the customer's printed name.
+bench,e765a01bde8b4bc38c0ace79.pdf,amount_total_gross,0.00,"1,008.18",high,"The printed total charges are 1,008.18, while 0.00 is the remaining amount due after payments, not the gross total."
+bench,aec3edadf52f450bac0b2392.pdf,date_issue,06/28/99,06/24/99,high,"The only printed date is 06/24/99 in the INVOICE DATE column, and 06/28/99 does not appear in the document."
+bench,2f8b7bac093b410e97862e1d.pdf,amount_due,$21.25,$18.06,high,"The invoice prints $18.06 as the Net Total payable, while $21.25 is the Gross Total before deductions."
+bench,3c62490aaca549359598c766.pdf,amount_total_gross,"$2,147.10","$2,526.00",high,"The document explicitly prints Gross as $2,526.00, while the label $2,147.10 is the Net amount after agency commission."
+bench,fab3ceeb06354527b6543be2.pdf,customer_id,2139,,high,"2139 is explicitly the CLIENT ORDER NUMBER, while 5655 appears in an unrelated handwritten notation, and no vendor-assigned customer identification number is shown."
+bench,fab3ceeb06354527b6543be2.pdf,order_id,013508,2139,high,"The document identifies 2139 as the CLIENT ORDER NUMBER, while 013508 is the vendor's DNI ORDER # rather than the customer's order/reference number."
+bench,cdcedda78fdf4c57bc73c308.pdf,vendor_email,dirriet@BellAtlantic.Net,dirnet@BellAtlantic.Net,high,"The full document prints the vendor email as dirnet@BellAtlantic.Net, not the label dirriet@BellAtlantic.Net or the extractor value dintet@BellAtlantic.Net."
+rest,0178861dd64f4c58bbd4367a.pdf,document_id,006041,,high,"The text does not print invoice number 006041, and 86463183 appears as an unlabelled footer number rather than an identifiable invoice number."
+rest,0178861dd64f4c58bbd4367a.pdf,vendor_address,"MANAGEMENT SCIENCE ASSOCIATES, INC.
+6565 Penn Avenue ♦ Pittsburgh, PA 15206-4490 | MANAGEMENT SCIENCE ASSOCIATES, INC.
+6565 Penn Avenue ♦ Pittsburgh, PA 15268-0155","6565 Penn Avenue, Pittsburgh, PA 15206-4490",high,"The label incorrectly combines the vendor’s street address with the remittance ZIP code; the printed vendor address is 6565 Penn Avenue, Pittsburgh, PA 15206-4490."
+rest,036f86baa0874467908a999d.pdf,vendor_name,"University of Kentucky Research Foundation
+c/o National City Bank",THE UNIVERSITY OF KENTUCKY RESEARCH FOUNDATION,high,"The issuing vendor is identified in the heading as THE UNIVERSITY OF KENTUCKY RESEARCH FOUNDATION, while c/o National City Bank is a remittance-routing line rather than part of the vendor's name."
+rest,0771232167ca4babb5bd0b10.pdf,customer_order_id,LRL▪YSP▪P7227,23154,high,"The customer's original order identifier is explicitly printed as PO # 23154, while LRL·YSP·P7227 is identified as the Agency Job #."
+rest,0af50d0b47ba428e857d88bd.pdf,amount_total_gross,$510.00,$600.00,high,"The invoice explicitly prints Gross Total as $600.00, while $510.00 is the Net Total after deducting the $90.00 commission."
+rest,0e184a6f51274438b8176ade.pdf,order_id,4383710,ORDER-3174387,high,"The document explicitly identifies ORDER-3174387 as the order number, while 4383710 is identified as the contract number."
+rest,0ff66169f4f0404ab9378e8c.pdf,vendor_order_id,885682,B85682,high,"The document prints 'OUR ORDER NO: B85682', supporting the extractor rather than the label '885682'."
+rest,10192f39d556412aaa280155.pdf,vendor_name,HON. JENNIFER GONZALEZ COLON,RADIO 156,high,"RADIO 156 is the supplier associated with the advertising contract, while HON. JENNIFER GONZALEZ COLON is identified as the resident commissioner, not the vendor."
+rest,10192f39d556412aaa280155.pdf,date_due,OCTOBER /2020,,high,“OCTOBER /2020” is the reporting term and “11/09/2020” is the invoice date; no payment due date is printed.
+rest,103e0f9064074f65bd9990a6.pdf,vendor_address,"Seven Ranges Radio, Inc.
+WRRR-FM
+P.O. Box 374
+St. Marys, WW 26170","P.O. Box 374, St. Marys, WV 26170",high,"The vendor address is printed as P.O. Box 374, St. Marys, WV 26170, whereas the label misspells the state abbreviation as WW."
+rest,10656e2770df4b1ab81f5bca.pdf,customer_billing_address,"LORILLARD TOBACCO COMPANY
+714 GREEN VALEY RD
+GREENSBORO NC 27408
+DONALD DAY","LORILLARD TOBACCO COMPANY
+714 GREEN VALLEY RD
+GREENSBORO NC 27408
+DONALD DAY",high,"The billing block prints '714 GREEN VALLEY RD', whereas the label misspells 'VALLEY' as 'VALEY'."
+rest,1141b304c74042f1970279ae.pdf,customer_billing_address,"Philip Morris U.S.A.
+1120 Park Avenue
+9th Floor
+New York NY 10017
+ATTENTION: Ms. Ellen Merlo","Philip Morris U.S.A.
+120 Park Avenue
+9th Floor
+New York NY 10017
+ATTENTION: Ms. Ellen Merlo",high,"The customer billing address is printed as 120 Park Avenue, not the label's 1120 Park Avenue."
+rest,12b756f12979456c9a4d4f05.pdf,customer_billing_address,"Philip Morris USA
+Dr. Richard lzac
+PO Box 26583
+Richmond, VA 23261-6583","Philip Morris USA
+Dr. Richard Izac
+PO Box 26583
+Richmond, VA 23261-6583",low,"The document prints the customer's name as Dr. Richard Izac with an uppercase I, not the label's lowercase l in lzac."
+rest,176a5f827a2943a0b1f5d5f3.pdf,amount_total_gross,"2,834.89","3,402.00",high,"The supplied OCR excerpt prints 3,402.00 for the permanent bulletin, while 2,834.89 is not printed anywhere in the provided text."
+rest,176a5f827a2943a0b1f5d5f3.pdf,document_id,045-8686200,045-8686200 002,high,"The supplied invoice OCR prints 'INVOICE NO: 045-8686200 002', so the label omits the printed identifier suffix '002'."
+rest,176a5f827a2943a0b1f5d5f3.pdf,order_id,AZTUC825-01 | 000000761,AZTUCS25-01,high,"The provided OCR prints REFERENCE NO: AZTUCS25-01, not AZTUC825-01, and does not support the additional number 000000761."
+rest,1a61c8ea461740e1b2a52fe2.pdf,customer_billing_address,"GCI
+92 GRANDVIEW AVENUE
+GREAT NECK NY 11020
+RUSSELL FILLMAN","GCI
+92 GRANDVIEW AVENUE
+GREAT NECK NY 11020
+RUSSELL TILLMAN",high,"The full document prints RUSSELL TILLMAN, not RUSSELL FILLMAN, and spells the street AVENUE rather than the extractor’s AVENUR."
+rest,1a61c8ea461740e1b2a52fe2.pdf,vendor_address,"FORT LEE FILM STORAGE & SERVICE CO., INC.
+1 Mount Vernon Street, Ridgefield Park, New Jersey 07666","1 Mount Vernon Street, Ridgefield Park, New Jersey 07660",high,"The issuing vendor's address is printed with ZIP code 07660, not the label's 07666."
+rest,1d65eee843dd4a64ab149d69.pdf,amount_total_gross,133.20,93.24,high,"The invoice prints a final Balance Due of 93.24 after a 39.96 discount, while 133.20 is the charges subtotal before that discount."
+rest,1f30ee50ea86473894d6620e.pdf,customer_billing_address,"LORILLARD TOBACCO COMPAANY INC.
+YOUTH SMOKING PREVENTION PRGM.
+714 GREEN VALLEY RD, BOX 10529
+GREENSBORO NC 27404
+ATTN: JORDAN BRESSLER","LORILLARD TOBACCO COMPANY INC.
+YOUTH SMOKING PREVENTION PRGM.
+714 GREEN VALLEY RD, BOX 10529
+GREENSBORO NC 27404
+ATTN: JORDAN BRESSLER",high,The full document prints COMPANY rather than the label’s COMPAANY and GREEN rather than the extractor’s GRBEN in the customer billing address.
+rest,21aeefeaae054f4cbeaa3ae3.pdf,customer_other_name,POLIT ICAI,POLITICAL,low,"The advertiser is printed as POLITICAL, not POLIT ICAI, while GREER,MARGOLIS,MITCHELL,BURNS&ASSC is the agency explicitly designated for billing."
+rest,21aeefeaae054f4cbeaa3ae3.pdf,customer_billing_address,"GREER,MARGOLIS,MITCHELL,BURNS&ASSC
+MEDIA BOYER -
+1010 WISCONSIN AVE, STE 800
+WASHINGTON, DC 20007","GREER,MARGOLIS,MITCHELL,BURNS&ASSC
+MEDIA BUYER -
+1010 WISCONSIN AVE, STE 800
+WASHINGTON, DC 20007",high,"The full document prints 'MEDIA BUYER -', not the label's 'MEDIA BOYER -', and identifies the agency address as Suite 800."
+rest,2317da5362164021a7053d6a.pdf,amount_total_gross,$357.00,$420.00,high,"The document explicitly prints Gross as $420.00, while $357.00 is the net and total due after the $63.00 agency commission."
+rest,2680d38513584971aa49b18a.pdf,vendor_name,AUTO RACING OFFICE,GLOBAL EVENTS GROUP,high,"GLOBAL EVENTS GROUP is identified as the invoice issuer in the letterhead, while AUTO RACING OFFICE appears only as the destination for mailed checks."
+rest,274933edf13e455a92f2b5c5.pdf,amount_due,"$ 10,330.00","$ 8,780.50",high,"The document identifies $ 10,330.00 as Gross and $ 8,780.50 as Net after the $1,549.50 agency commission, making the net amount the amount due."
+rest,2795a84e8d6f496784c54ac3.pdf,document_id,3023,205023,high,"The full document text prints invoice NUMBER 205023, not the label 3023; the extractor's 05023 appears to omit the leading 2."
+rest,290620bace424639ae3277eb.pdf,amount_total_net,"$3,040.00","$2,584.00",high,"The invoice prints $2,584.00 as Total Net Due with $0.00 sales tax, while $3,040.00 is explicitly the gross amount before agency commission."
+rest,2af423e41c0d44ebb797e2d3.pdf,customer_billing_name,Radio Ads on The Tennessee Star Report,Karen Moore for State Executive Committee,high,"The billed customer is Karen Moore for State Executive Committee, while “Radio Ads on The Tennessee Star Report” describes the services being purchased."
+rest,2d47414fbcc148ea9fd93397.pdf,amount_total_gross,$148.75,$175.00,high,"The printed Grand Total is $175.00, while $148.75 is explicitly the Net Total after deducting the $26.25 commission."
+rest,2e26414a266a429a8ea5ac74.pdf,date_issue,6/02/99,5/26/99,high,"The document explicitly prints 5/26/99 as the INVOICE DATE, whereas 6/02/99 is the COPY DATE."
+rest,2e26414a266a429a8ea5ac74.pdf,customer_billing_address,"BRYAN CTR
+725 BR0AD ST
+DURHAM NC 27705","DUKE UNIV
+BRYAN CTR
+725 BROAD ST
+DURHAM NC 27705",high,"The BILL TO block supports the extractor's address and prints BROAD with the letter O, not BR0AD with a zero as in the label."
+rest,2e3c61fb2b5a4191bf430e33.pdf,vendor_name,"WAFC
+AM-FM | WWRF AM1380-
+FM96.9
+WLLY FM99.5 | WOKC AM1570-
+FM100.9 | WAFZ AM1490-
+FM92.1",GLADES MEDIA RADIO GROUP,high,"The issuing company is explicitly named GLADES MEDIA RADIO GROUP, while the label concatenates multiple station names and frequencies rather than identifying the supplier company."
+rest,2e9d2485019f410a8ffd4daf.pdf,customer_billing_address,"2601 Northwind Drive
+-
+Richmond, VA 23233","StateNets, 48 Chiswick Cir, Bloomington, IL 61704",high,"The explicit BILLING INFORMATION section and invoice instructions identify the Bloomington address as the billing address, while the Richmond address appears in the advertiser/buyer section."
+rest,2f53eac84e0d4bf8aa42ed2b.pdf,order_id,22-SL4LG-001-001,SLFLG PMG Maui May 22,high,"The document explicitly identifies 'SLFLG PMG Maui May 22' as the Order Number, while '22-SL4LG-001-001' is identified as the Project number."
+rest,36c8a4c1eb604a4798cea4bc.pdf,amount_total_gross,"$1,317.50","$1,550",high,"The printed station total is $1,550, whereas $1,317.50 is explicitly marked NET and therefore is not the gross total."
+rest,376c8efc28e841eb9cac4095.pdf,vendor_address,"MANAGEMENT SCIENCE ASSOCIATES, INC.
+6565 Penn Avenue
+Pittsburgh, Pennsylvania 15206-4490 | Management Science Associates, Inc.
+P.O. Box 400155-W
+Pittsburgh, PA 17268-0155","6565 Penn Avenue, Pittsburgh, Pennsylvania 15206-4490",high,"The issuing vendor's address is printed as 6565 Penn Avenue, Pittsburgh, Pennsylvania 15206-4490, while the label also includes a remittance address with an incorrect ZIP code (17268-0155 instead of 15268-0155)."
+rest,3c31b69abae14f408acdb051.pdf,vendor_address,"Rochester Institute of Technology
+Conroller's Office
+Restricted Funds Accounting
+7 Lomb Memorial Drive
+Rochester, NY 14623-5603","Rochester Institute of Technology
+Controller's Office
+Restricted Funds Accounting
+7 Lomb Memorial Drive
+Rochester, NY 14623-5603",high,"The full document prints ""Controller's Office,"" not the label's ""Conroller's Office,"" and confirms ""7 Lomb Memorial Drive,"" not the extractor's ""7 Lorcb Memorial Drive."""
+rest,3e456f91e5ac43abaea1c168.pdf,vendor_address,"P.O. Box 1506
+Powell, Ohio 43065-1506
+Attn. : Bill Gavin | Bill Johnson 6th Congressional Dist
+Cadiz, OH","P.O. Box 1506
+Powell, Ohio 43065-1506
+Attn. : Bill Gavin",high,"The label improperly appends the advertiser’s name and location, Bill Johnson 6th Congressional Dist in Cadiz, OH, to the printed Unwired Media address."
+rest,3e456f91e5ac43abaea1c168.pdf,amount_due,$445.06,"$ 1,570.80",high,"The label is the one-week Net/Net amount, whereas the printed Net total for the full three-week schedule is $ 1,570.80, consistent with the instruction to show only Gross and Net on invoices."
+rest,3e456f91e5ac43abaea1c168.pdf,amount_total_gross,$445.06,"$1,848.00",high,"The document prints $1,848.00 as the gross total for the three-week flight, whereas $445.06 is one week's net/net amount and $616.00 is only one week's gross."
+rest,3e456f91e5ac43abaea1c168.pdf,amount_total_net,$616.00,"$1,570.80",high,"The document prints $1,570.80 as the net total for the three-week schedule, while $616.00 is the one-week gross and $523.60 is the one-week net."
+rest,3ef10e565663409cbbb43990.pdf,order_id,N41148,2133,high,"The buyer's reference is explicitly printed as 'Lorillard Project #2133', whereas N41148 is the vendor's JOB NO. and the purchase order field is blank."
+rest,403be68a70ae4a828386db7b.pdf,document_id,2232-007068-2,2232-002069-2,high,"The full document text prints Invoice No. 2232-002069-2, supporting neither the label 2232-007068-2 nor the extractor value 2232-002068-2."
+rest,450aa854ecb548ba956d5707.pdf,vendor_name,"Amy Mills, LUC-Canal Partners",WAGT-TV,high,"WAGT-TV is the issuing broadcaster named in the report title, while Amy Mills, LUC-Canal Partners is identified as the candidate/agency contact receiving a copy."
+rest,48f7d5b440cd46a0bca2db5d.pdf,customer_other_name,Dave Martin,Senate Leadership Fund,high,"Dave Martin is identified as the account executive, not a customer or partner, while Senate Leadership Fund is the advertiser distinct from the StateNets billing contact."
+rest,497f0584f29d403a86d2aa01.pdf,amount_due,"US$ 25,452","US$ 25,462",high,"The invoice prints AMOUNT PAYABLE as US$ 25,462, not the label's US$ 25,452."
+rest,497f0584f29d403a86d2aa01.pdf,order_id,PMH00/01.SC01,PMI00/01.SC01,high,"The document prints Project No: PMI00/01.SC01, not the label's PMH00/01.SC01."
+rest,4a89f808d94d4ee28f98053a.pdf,customer_billing_address,"Dr Bruce D Davias
+Philip Morris USA
+4201 Commerce Road
+Richmond, VA 23234","Dr Bruce D Davies
+Philip Morris USA
+4201 Commerce Road
+Richmond, VA 23234",high,"The customer billing address in the TO block names Dr Bruce D Davies, not Dr Bruce D Davias as spelled in the label."
+rest,4a89f808d94d4ee28f98053a.pdf,vendor_address,"University of Kentucky Research Foundation
+c/o National City Bank
+Section 50
+Louisvilie, Kentucky 40269 | University of Kentucky Research Foundation
+c/o National City Bank
+Section 508
+Louisville, Kentukcy 40289","University of Kentucky Research Foundation
+c/o National City Bank
+Section 506
+Louisville, Kentucky 40269",high,"Both the REMIT block and payment instructions print Section 506, Louisville, Kentucky 40269, rather than either address in the label or the extractor’s ZIP code 40289."
+rest,4a89f808d94d4ee28f98053a.pdf,amount_due,"38,322.00","$ 35,322.00",high,"The document states “TO BILL FOR $ 35,322.00 PER AGREEMENT ON FILE,” supporting neither the label nor the extractor's amount."
+rest,4a89f808d94d4ee28f98053a.pdf,document_id,085063001B,0850830018,high,"The full document OCR lists Invoice No. 0850830018, while the alternate OCR reads 0850630015; neither supports the label 085063001B."
+rest,4a89f808d94d4ee28f98053a.pdf,amount_total_gross,"38,322.00","35,322.00",high,"The invoice explicitly prints 'TO BILL FOR $ 35,322.00', supporting neither the label nor the extractor's amount."
+rest,4a89f808d94d4ee28f98053a.pdf,customer_id,4-65063,4-05063,high,"The document prints Account No. 4-05063, supporting the extractor's value rather than the label 4-65063."
+rest,4b0de795960b437685e924ae.pdf,customer_billing_name,TIM DONNELLY CONGRES,JEN SLATER,high,"The receipt explicitly identifies JEN SLATER as the Customer Name, while TIM DONNELLY CONGRES appears in the Customer # field."
+rest,4d1e154810b54f3fbebdad21.pdf,customer_billing_address,"PHILIP MORRIS USA
+SHYAM BISWAL
+ATTN GFRRY NIXON 804-274-2003
+R AND D B2
+RICHMOND VA 23234","PHILIP MORRIS USA
+SHYAM BISWAL
+ATTN GERRY NIXON 804-274-2003
+R AND D B2
+RICHMOND VA 23234",high,"The full document prints GERRY NIXON and R AND D B2, whereas the label misspells GERRY as GFRRY and the extractor substitutes 0 for D."
+rest,517727f3173a47e6b15bd3b6.pdf,vendor_address,"HMS GROUP LLC
+1747 PENNSYLVANIA AVENUE, NM • SUITE 900 • WASHINGTON, DC 20006","1747 PENNSYLVANIA AVENUE, NW • SUITE 900 • WASHINGTON, DC 20006",high,"The issuing vendor’s address is printed with NW, not the label’s NM, and the full document confirms Suite 900."
+rest,54173831d0ba4202a70f2fe5.pdf,customer_billing_address,"3Q20 RD
+PORTLAND, ME","PHD
+195 BROADWAY, 5FL
+NEW YORK, NY 10007
+ATTN: MEDIA REC DEPT/FIN SHARED SRVC",high,"The label combines estimate and market text rather than an address, while the document explicitly directs vendor invoices to PHD's New York address rather than its Atlanta agency address."
+rest,576dca06d83c42ae8162fe8c.pdf,date_due,10/23/20,,high,"10/23/20 is the check payment date and November 2, 2020 is the invoice date; no payment due date is printed."
+rest,59e5499512e043ec843cd107.pdf,vendor_name,"WAFC
+AM-FM | WWRF AM1380-
+FM96.9
+WLLY FM99.5 | WOKC AM1570-
+FM100.9
+210 W. North Park St. | WAFZ AM1490-
+FM92.1",GLADES MEDIA RADIO GROUP,high,"The issuing company is printed as GLADES MEDIA RADIO GROUP, while the label incorrectly combines multiple station names and part of an address."
+rest,5ab8ca1a8ba84b669c242e1e.pdf,customer_billing_name,CHAD MAYES ASSEMBLY,JAMES BATTIN,high,"The receipt explicitly identifies JAMES BATTIN as 'Customer Name', while CHAD MAYES ASSEMBLY appears in the 'Customer #' field."
+rest,5ac725a7547045bf8af7a21c.pdf,vendor_address,"MANAGEMENT SCIENCE ASSOCIATES, INC.
+6565 Penn Avenue♦Pittsburgh, PA I5206-4490 | MANAGEMENT SCIENCE ASSOCIATES, INC.
+P.O. Box 400155-W♦Pitsburgh, PA 15268-0155","6565 Penn Avenue, Pittsburgh, PA 15206-4490",high,"The issuing vendor's address is printed as 6565 Penn Avenue, Pittsburgh, PA 15206-4490; the label misspells the city and postal code and combines it with a separate remittance address, while the extractor omits the initial 6."
+rest,5ac725a7547045bf8af7a21c.pdf,document_id,06045,100045,high,"The invoice number printed under NUMBER is 100045, while 06045 is unsupported and 5673-1499 identifies the work item rather than the invoice."
+rest,5ce2533331c445cead4e25be.pdf,customer_billing_address,"LORILLARD TOBACCO COMPANY INC.
+YOUTH SMOKING PREVENTION PRGM.
+714 GREEN VALLEY RD, BOX 10529
+GREENSBORO NC 27404
+ATTN. JORDAN BRESSLER | LORILLARD TOBACCO COMPANY INC.
+YOUTH SMOKING PREVENTION PRGM.
+714 GREEN VALLEY RD, BOX 10529
+GREENSBORO NC 27404
+ATIN: JORDAN BRESSLER","LORILLARD TOBACCO COMPANY INC.
+YOUTH SMOKING PREVENTION PRGM.
+714 GREEN VALLEY RD, BOX 10529
+GREENSBORO NC 27404
+ATTN: JORDAN BRESSLER",high,"Both pages print the same billing address with 'ATTN: JORDAN BRESSLER', whereas the label concatenates duplicate blocks and misspells the second attention line as 'ATIN'."
+rest,6128062e86cd4b739962adc2.pdf,customer_billing_name,KAIZMEIA GROUP,KATZ MEDIA GROUP,high,"The invoice prints KATZ MEDIA GROUP in the customer address block and remittance section, while KAIZMEIA GROUP is not printed anywhere."
+rest,6467c52003444e2781e7faaa.pdf,amount_total_gross,"$1,122.00","$1,320.00",high,"The invoice explicitly prints Gross as $1,320.00, while the label $1,122.00 is the Net amount after agency commission."
+rest,67edf662037f4e6581a25ab8.pdf,customer_billing_name,REFORM SAN BERNARDIN,DOLORES FRANCO,high,"The receipt explicitly identifies DOLORES FRANCO as the Customer Name, while REFORM SAN BERNARDIN appears in the Customer # field."
+rest,68158cd8cdae4ae3851629c2.pdf,vendor_name,BOB DUDLEY,KGMB,high,"BOB DUDLEY is the recipient identified by 'TO', while KGMB is the issuing station/vendor named in the header and STATION/MARKET field."
+rest,6b4f1118b90f4b8ea95633ec.pdf,document_id,082898-3,021799-1,high,"The current invoice is identified as 'Ref 021799-1', while '082898-3' identifies a prior invoice whose overpayment is credited."
+rest,6cd3e26324cd48f189536d17.pdf,order_id,10/31/99,,high,"10/31/99 is the invoice date, the P.O. NO. field is blank, and 2080724821A is an exhibit-page identifier rather than a customer's order/reference number."
+rest,6f40049e053341688402d4c0.pdf,vendor_address,"Cambridge Street
+Burlingltn, Massachusetts 01803-4610 | Post Office Box 4088
+Boston, MA 02211","Cambridge Street
+Burlington, Massachusetts 01803-4610",high,"The vendor header prints Cambridge Street, Burlington, Massachusetts 01803-4610, but does not print the label's additional Boston post office box address or its misspelling of Burlington."
+rest,6fc4df9f834d4b2085c24a7d.pdf,customer_billing_name,REFORM SAN BERNARDIN,DOLORES FRANCO,high,"The receipt explicitly identifies DOLORES FRANCO as the Customer Name, while REFORM SAN BERNARDIN is listed as the Customer #."
+rest,71d1368cb360493583548459.pdf,vendor_name,SPOT RADIO,WJBQ-F,high,"SPOT RADIO identifies the media type, not a company, while WJBQ-F is the named station supplying the advertising services."
+rest,71d1368cb360493583548459.pdf,customer_billing_address,"3Q20 RD
+PORTLAND, ME","PHD 195 BROADWAY, 5FL NEW YORK, NY 10007 ATTN: MEDIA REC DEPT/FIN SHARED SRVC",high,"The label combines an estimate description and market rather than a billing address, while the document explicitly directs vendor invoices to PHD’s New York address."
+rest,74f409df7c5f494fa67fcac2.pdf,vendor_address,"AMERICAN EXPRESS TRS
+2840 SOUTH 123RD COURT OMANA NE 68144",2040 SOUTH 123RD COURT OMAHA NE 68144,high,"The full document text gives the issuing vendor’s address as 2040 SOUTH 123RD COURT OMAHA NE 68144, not the label’s 2840 address with the misspelled city OMANA."
+rest,74f409df7c5f494fa67fcac2.pdf,customer_id,460901201,460001201,high,"The document explicitly prints CUSTOMER NBR: 460001201, supporting the extractor rather than the label 460901201."
+rest,7591b51f45644b4a8bed1c51.pdf,customer_billing_name,JIM BATTIN CHADMAYES,JAMES BATTIN,high,"The document explicitly identifies JAMES BATTIN as the Customer Name, while JIM BATTIN CHADMAYES appears in the Customer # field."
+rest,7a6138b38a274265ad133070.pdf,amount_due,"$ 5,250.00","$ 4,648.14",high,"The document identifies $ 5,250.00 as Gross and $ 4,648.14 as Net, the payable total after agency commission and excise tax."
+rest,8104f4910ca94395afa1298d.pdf,vendor_address,"KATZ RADIO
+WRWN-FM (Savannah, GA)
+JESSICA LAVORERIO.
+PHILADELPHIA",,high,"The label combines representative, station, contact, and office fields rather than a vendor address, while the extracted New York address is explicitly the agency’s billing address, and no supplier address is provided."
+rest,848388019f994cf3bd604325.pdf,order_id,82221355,82221358,high,"The document prints CONFIRMATION NUMBER: 82221358, not the label 82221355 or the extractor's truncated 822213."
+rest,848388019f994cf3bd604325.pdf,amount_due,225.00-,0.00,high,"The total amount due is printed as '** BALANCE ** 0.00', while '225.00-' is the direct-bill credit rather than the outstanding balance."
+rest,8697219373c84cb19a1da8b4.pdf,customer_billing_address,"GCl
+Attn. Karen Surgeon
+92 GRANDVIEW AVENUE
+GREAT NECK, NY 11020","GCI
+Attn. Karen Surgeon
+92 GRANDVIEW AVENUE
+GREAT NECK, NY 11020",low,"The customer billing address is printed with the organisation name GCI, not GCl as in the label, and the extractor matches the printed address."
+rest,8be41060e63a40f0a08e3883.pdf,vendor_name,PHOENIX DIVISION,ELLER MEDIA COMPANY,high,"ELLER MEDIA COMPANY is the issuing company named in the invoice header, while PHOENIX DIVISION identifies its division rather than the supplier company."
+rest,8e111a3f5e2845a58952d37a.pdf,customer_id,000649,4470,high,"The invoice explicitly identifies the customer account as “Acct # 4470,” while “000649” appears only as an unlabeled number in the supplied OCR excerpt."
+rest,8e111a3f5e2845a58952d37a.pdf,tax_detail_gross,$425.00,$500.00,high,"The invoice explicitly prints Gross Total as $500.00, while $425.00 is the NET TOTAL after deducting the $75.00 commission."
+rest,900201f55f4d40c3a35fc0dd.pdf,order_id,X85835,3328,high,"3328 is explicitly printed as the Contract/Grant/Agreement/Purchase Order number, whereas X85835 is the contractor's claim number for remittance advice, not the buyer's order/reference number."
+rest,9112d76d044343d289c4007e.pdf,vendor_address,"MANAGEMENT SCIENCE ASSOCIATES, INC
+6565 Penn Avenue◆Pittsburgh, PA I5206-4490 | MANAGEMENT SCIENCE ASSOCIATES, INC.
+P.O. Box 400155-W◆Pittsburgh, PA I5268-0155","6565 Penn Avenue, Pittsburgh, PA 15206-4490",high,The label misspells both printed ZIP codes with 'I' instead of '1' and combines the vendor’s issuing address with its separate remittance address; the extractor matches the printed issuing address.
+rest,97b68a44b2de4ad9adb7ac65.pdf,customer_other_name,Tis King &̀ Friends,,high,"The label misspells the printed name “Tim King & Friends,” which is the billed customer, and no other customer or partner name is printed."
+rest,98cfd9b1adae4f269db59c8e.pdf,amount_total_gross,$701.25,$825.00,high,"The invoice explicitly prints Gross Total as $825.00, while $701.25 is the Net Total after deducting commission."
+rest,9905780276e14669a6e1b6cd.pdf,vendor_name,BOB DUDLEY,KGMB,high,"BOB DUDLEY is the recipient identified by 'TO', whereas KGMB is the issuing station/vendor named on the makegood notice."
+rest,9cffd75e1cd84d8188aff20c.pdf,order_id,R590113364343 | 229093,229093,high,"The customer's contract reference is printed as 'Memo: Contract 229093', while R590113364343 is the card-payment receipt reference rather than the customer's order/reference number."
+rest,9e2b80eff45f4f2199ed93f3.pdf,amount_total_gross,"$1,125.00","$1,425.00",high,"The document prints $1,425.00 as the Order Totals, whereas $1,125.00 is the total for the displayed buyline and report rather than the full order."
+rest,9e2b80eff45f4f2199ed93f3.pdf,amount_due,"$1,125.00","$1,425.00",high,"The document prints $1,425.00 as Order Totals, while $1,125.00 is the total for the displayed buyline and Report Totals rather than the full order."
+rest,9f49f9b038df46a280ae8f38.pdf,amount_total_gross,1402.50,"$1,650.00",high,"The invoice explicitly prints $1,650.00 as the total Gross Amount with $0.00 sales tax, while $1,402.50 is the Net Due after agency commission and the amount paid."
+rest,9f49f9b038df46a280ae8f38.pdf,amount_total_net,1650.00,"$1,402.50",high,"The invoice prints $1,402.50 as the total Net Due with $0.00 sales tax, whereas $1,650.00 is explicitly the gross amount before agency commission."
+rest,a2309a7e736b4be8b2dc6108.pdf,order_id,/ /0133,33741477,high,"The order's CONT# is 33741477, whereas '/ / 0133' appears as the C/P/E code rather than the buyer's order/reference number."
+rest,a2956db5b060416181d1757b.pdf,customer_billing_address,"WHP-TV HARRISBURG, PA
+(NW80) POLITICAL
+MCGINTY FOR GOVERNOR
+2568","CANAL PARTNERS MEDIA, 25 WHITLOCK PLACE SW, 2ND FL, MARIETTA, GA 30064",high,"The label combines station, advertiser, product, and estimate fields rather than an address, while the document prints the customer agency's address as CANAL PARTNERS MEDIA, 25 WHITLOCK PLACE SW, 2ND FL, MARIETTA, GA 30064."
+rest,a2956db5b060416181d1757b.pdf,customer_billing_name,"WHP-TV HARRISBURG, PA",CANAL PARTNERS MEDIA,high,"WHP-TV HARRISBURG, PA is identified as the station providing the advertising, while CANAL PARTNERS MEDIA is the purchasing agency listed with its billing address."
+rest,a2956db5b060416181d1757b.pdf,vendor_name,(CAPM) CANAL PARTNERS MEDIA,"WHP-TV HARRISBURG, PA",high,"WHP-TV HARRISBURG, PA is the station supplying the advertising airtime, while (CAPM) CANAL PARTNERS MEDIA is explicitly identified as the buying agency."
+rest,a3936554677248e291dde526.pdf,vendor_name,"WAFC
+AM590/FM
+92.5/100.5/105.1 | WWRF
+AM1380/FM96.9/94.7
+WLLY
+FM99.5 | WOKC
+AM1570/FM100.9
+WLMX
+FM106.1/FM95.1 | WAFZ
+AM1490/FM92.1",GLADES MEDIA RADIO GROUP,high,"The issuing company is explicitly named GLADES MEDIA RADIO GROUP, while the label concatenates station call signs and frequencies rather than the supplier company name."
+rest,a3ab0695612a420da43bd432.pdf,customer_billing_name,"Tapas Sengupta, Ph.D.
+Philip Moris USA",Philip Morris USA,high,"The billed organization is printed as Philip Morris USA, while the label misspells Morris as Moris and includes the contact person Tapas Sengupta."
+rest,a3f51835ee5a479cb87f85fe.pdf,order_id,4337496,3155618,high,"The buyer's reference is explicitly printed as “MFS Order # 3155618,” whereas 4337496 is identified separately as the contract number."
+rest,a7ef01c6c0584fff95da06f5.pdf,customer_billing_name,Shannon Eaker,BlueWest Media,high,"Shannon Eaker is the KJZZ-TV station contact, whereas BlueWest Media is the purchasing agency identified with the invoice-submission instructions and billing address."
+rest,a7ef01c6c0584fff95da06f5.pdf,amount_total_gross,"$1,870.00","$2,200.00",high,"The document explicitly prints $2,200.00 as Station Gross Totals, while the label $1,870.00 is the Station Net amount."
+rest,a82b97925f0f4fe1b9f69dfc.pdf,customer_id,000331,4769,high,"The invoice explicitly identifies 4769 as “Acct #” on both pages, whereas 000331 is an unlabeled number beneath the mailing address and is not identified as the customer account number."
+rest,a9b1857a262540a68a3e56d8.pdf,customer_other_name,Skyview - Youngkin for Govenor - SSN | Skyview Networks,Skyview - Youngkin for Governor - SSN,high,The Client line prints 'Skyview - Youngkin for Governor - SSN'; the label misspells 'Governor' and appends the separately printed agency name 'Skyview Networks'.
+rest,a9b1857a262540a68a3e56d8.pdf,payment_terms,within ten (10) days of the broadcast month end,Payments to Station/Media Outlet will be sent upon receipt of Advertiser's payment to Skyview Networks,high,"The ten-day deadline governs receipt of invoices and affidavits, whereas the extractor's value states the actual payment terms."
+rest,ab22081d49784e2bb15460d5.pdf,amount_total_net,"562,500.00","62,500.00",high,"The invoice prints '$62,500.00 NET' as the total amount due, not the labeled '562,500.00'."
+rest,aebb748aebad4fbb90a3994a.pdf,customer_billing_address,"Dr Bruce D Davies
+Phillp Morris USA
+4201 Commerce Road
+Richmond, VA 23234","Dr Bruce D Davies
+Philip Morris USA
+4201 Commerce Road
+Richmond, VA 23234",low,"The TO address prints Philip Morris USA, not the label’s misspelled Phillp Morris USA, and the ZIP code is 23234 rather than the extractor’s 29234."
+rest,aebb748aebad4fbb90a3994a.pdf,customer_id,4-65063,4-65083,high,"The document prints Account No. 4-65083, not the labeled value 4-65063."
+rest,aebb748aebad4fbb90a3994a.pdf,customer_billing_name,"Dr Bruce D Davies
+Phillip Morris USA","Dr Bruce D Davies
+Philip Morris USA",high,"The billing block names Dr Bruce D Davies and Philip Morris USA, but the label misspells Philip as Phillip."
+rest,af3b3e11a6d546e2996a593e.pdf,customer_other_name,"Hulsen Media Services, LLC",Steven for Montgomery,high,"Hulsen Media Services, LLC is explicitly the billed party under 'Send Billing To', while Steven for Montgomery is the separately named client and satisfies the field's exclusion of the billed customer."
+rest,b0080d5d49224c1eb574141d.pdf,customer_billing_address,"Lorillad Tobacco Co.
+Charles Gaworski, M.S., D.B.A.T.
+Manager Toxicology
+P.O. Box 21688
+Greensboro, NC 27420","Lorillard Tobacco Co.
+Charles Gaworski, M.S., D.B.A.T.
+Manager Toxicology
+P.O. Box 21688
+Greensboro, NC 27420",high,"The printed customer billing address names Lorillard Tobacco Co., whereas the label misspells it as Lorillad Tobacco Co."
+rest,b0557da98934425180c4f16a.pdf,vendor_name,AUTO RACING OFFICE,GLOBAL EVENTS GROUP,high,"GLOBAL EVENTS GROUP is the issuing company named in the invoice header, while AUTO RACING OFFICE appears only as the check-remittance recipient."
+rest,b1537003c7bc4869878467da.pdf,customer_billing_address,"Philip Morris Incurporatoc
+4201 Commerce Road
+Richmond, VA 23234
+U.S.A.
+Attn: Dr. Bruse D. Davies","Philip Morris Incorporated
+4201 Commerce Road
+Richmond, VA 23234
+U.S.A.
+Attn: Dr. Bruce D. Davies",high,"The printed billing address spells the customer name 'Philip Morris Incorporated' and the contact 'Dr. Bruce D. Davies', not the misspellings in the label."
+rest,b4eb1516fd61447c86cd2156.pdf,vendor_name,Scot Seabolt,WAGT-TV,high,"WAGT-TV is the issuing company named in the report heading, while Scot Seabolt is explicitly identified as its representative."
+rest,b7173fcb9d1344a083d376a1.pdf,amount_total_gross,"$4,915.55","$5,783.00",high,"The document explicitly prints $5,783.00 as 'Station Gross Totals', while the label $4,915.55 is the 'Station Net' amount."
+rest,b7173fcb9d1344a083d376a1.pdf,vendor_name,"Mary Wittemyer
+BlueWest Media",KWWL-TV,high,"KWWL-TV is the station supplying the advertising airtime, while Mary Wittemyer at BlueWest Media is the agency contact requesting submission of invoices, not the vendor."
+rest,b7173fcb9d1344a083d376a1.pdf,vendor_email,mary@bluewestmedia.com,dmorehead@kwwl.com,high,"KWWL-TV is the station selling the advertising and lists dmorehead@kwwl.com as its contact email, while mary@bluewestmedia.com belongs to the ordering agency BlueWest Media."
+rest,b7173fcb9d1344a083d376a1.pdf,customer_id,1844,TV17137 or 9917137,high,"1844 is explicitly the Estimate ID, whereas TV17137 or 9917137 is printed as the Agency ID identifying the customer."
+rest,b7173fcb9d1344a083d376a1.pdf,customer_billing_name,Don Morehead,BlueWest Media,high,"Don Morehead is the KWWL-TV station contact, while BlueWest Media is the ordering agency identified with the invoice submission instructions and billing address."
+rest,bf0aa41400564abe8e03800f.pdf,amount_total_gross,"$2,167.50","$2,550.00",high,"The document explicitly prints Total Gross Cost as $2,550.00, while the label $2,167.50 is the Total Net Cost."
+rest,c2f3ae1cfd964e75918405d1.pdf,customer_billing_address,"PHILIP MORRIS USA
+RADTKE FALK
+ATITN GERRY NIXON 804-274-2003
+R AND D B2
+RICHMOND VA 23234","PHILIP MORRIS USA
+RADTKE FALK
+ATTN GERRY NIXON 804-274-2003
+R AND D B2
+RICHMOND VA 23234",high,"The printed customer address uses ATTN, not the label's ATITN, and VA, not the extractor's UA."
+rest,c34046cc071d4b9b9230aaab.pdf,customer_billing_name,Radio Ads on The Tennessee Star Report,Laurie Cardoza Moore for TN 63,high,"The invoice names Laurie Cardoza Moore for TN 63 as the customer being billed, while the label describes the advertising service."
+rest,c3cd6444e4174e7189486b31.pdf,customer_billing_name,"Lisa Obermeyer, Buyer",Friends of Mark Gordon,high,"The document explicitly identifies Friends of Mark Gordon as the client, while Lisa Obermeyer is identified as the buyer contact rather than the customer being billed."
+rest,c48cbd878b0e43d0987c5696.pdf,vendor_name,A STANDARD INTERNATIONAL TOBACCO COMPANY,"STANDARD COMMERCIAL TOBACCO CO., INC.",high,"STANDARD COMMERCIAL TOBACCO CO., INC. is named as the invoice issuer and account holder, while 'A STANDARD INTERNATIONAL TOBACCO COMPANY' is a corporate-affiliation tagline."
+rest,c48cbd878b0e43d0987c5696.pdf,vendor_address,P O Box • 2201 Miller Road • Wilson • NC 27894 • USA,"P O Box 450, 2201 Miller Road, Wilson, NC 27894, USA",high,"The vendor address explicitly includes P O Box 450, but the label omits the printed box number."
+rest,c54cc80bdd694cfd9af72cb0.pdf,customer_id,865864-LA,,high,"865864-LA is Talent Partners’ pension and health remittance account, not a customer identification number, while ZGCI0200 is the commercial’s ISCIT number; no customer ID is printed."
+rest,c5c9068e6fd14310915f6146.pdf,customer_billing_address,"CANAL PARINERS MEDIA
+900 CIRCLE 75 PKWY SE SUITE 1650
+ATLANTA GA 30339","CANAL PARTNERS MEDIA
+900 CIRCLE 75 PKWY SE SUITE 1650
+ATLANTA GA 30339",high,"The printed customer billing address names CANAL PARTNERS MEDIA, whereas the label misspells PARTNERS as PARINERS."
+rest,c616442427bf4f69a2443b3e.pdf,document_id,8119,8119 (2:2),high,"The invoice identifier is printed as '8119 (2:2)', so the label omits the printed parenthetical suffix."
+rest,cbbbbe755d3d43aaa8589810.pdf,order_id,013508,2139,high,"The customer's order number is explicitly printed as CLIENT ORDER NUMBER: 2139, while 013508 is the vendor's DNI ORDER #."
+rest,ccc0abbbb9e44a749b76836f.pdf,customer_other_name,"Hulsen Media Services, LLC",Foster Campbell for U.S. Senate,high,"Hulsen Media Services, LLC is explicitly the billed party under 'Send Billing To', while Foster Campbell for U.S. Senate is the separately named client and meets the definition of another customer."
+rest,cde472bd633c495daee6da76.pdf,customer_billing_address,"Eugene COMBO KEZI
+P. O. BOX 7009
+EUGENE, OR 97401","AL MEDIA
+222 W. ONTARIO ST
+SUITE 600
+CHICAGO, IL 60654",high,"The label gives the selling station KEZI's address, whereas the printed AL MEDIA address belongs to the customer agency."
+rest,cde472bd633c495daee6da76.pdf,vendor_name,AL MEDIA,KEZI,high,"KEZI is the issuing station supplying the advertising time, while AL MEDIA is explicitly identified as the purchasing agency."
+rest,cde472bd633c495daee6da76.pdf,vendor_address,"AL MEDIA
+222 W. ONTARIO ST
+SUITE 600
+CHICAGO, IL 60654","P. O. BOX 7009, EUGENE, OR 97401",high,"The issuing supplier is Eugene COMBO KEZI at P. O. BOX 7009, EUGENE, OR 97401, while the labeled Chicago address belongs to AL MEDIA, explicitly identified as the buying agency."
+rest,cde472bd633c495daee6da76.pdf,customer_billing_name,Eugene COMBO KEZI,AL MEDIA,high,"AL MEDIA is the agency named in the customer address block, while Eugene COMBO KEZI is the station selling the advertising, not the customer being billed."
+rest,ced968108b864d21ae712ce5.pdf,vendor_name,OLDENBURG FOR ASSEMBLY | Oldenburg For Assembly,WVRQ-AM,high,"WVRQ-AM is the station supplying the advertising, while OLDENBURG FOR ASSEMBLY is explicitly identified as the advertiser rather than the issuing vendor."
+rest,d2351fcd9ebe48c2baa13db8.pdf,document_id,99-020018,99-02001B,high,"The document prints Invoice #99-02001B, with a final letter B rather than the label’s digit 8."
+rest,d2351fcd9ebe48c2baa13db8.pdf,vendor_address,"Rothstein-Tauber, Incorporated
+Market Research Services
+1351 Washington Bvd.•Stamford, CT 06902","1351 Washington Blvd. • Stamford, CT 06902",high,"The printed vendor address is 1351 Washington Blvd. • Stamford, CT 06902; the label misspells Blvd. as Bvd. and includes the vendor name and service description."
+rest,d2da3438091b4000a34056aa.pdf,customer_billing_name,Donald Spicer,Columbus City Council Democrats,high,"Columbus City Council Democrats is identified as the advertiser/customer, while Donald Spicer is listed only as the buyer contact, not the customer being billed."
+rest,d35b76ef9fb244cf9a9f26d7.pdf,customer_other_name,McCain Mikalaski,Karen Giddens,high,"McCain Mikalaski is explicitly the Advertising.com representative, while Karen Giddens is the additional customer-side name and RJ Reynolds Tobacco Company is the billed customer."
+rest,d3deb3b359a141ecba602d66.pdf,amount_due,"$52,234.00","$44,398.90",high,"The amount due is the printed Total Net of $44,398.90 after agency commission, whereas $52,234.00 is explicitly the Total Gross."
+rest,d5b66bd634154728b2d43805.pdf,vendor_name,"WRLV-EM
+MORGAN COUNTY INDUSTRIES, INC.
+MORGAN COUNTY INDUSTRIES","WRLV-FM
+MORGAN COUNTY INDUSTRIES, INC.
+MORGAN COUNTY INDUSTRIES",high,"The issuing vendor header prints WRLV-FM, not the label’s misspelled WRLV-EM, followed by the two Morgan County Industries name lines."
+rest,d5e093e75554476d8761c5a3.pdf,customer_billing_address,"PHILIP MORRIS EXTERNAL
+RESEARCH PROGRAM
+RESEARCH MANAGEMENT GROUP
+1099 WINTERSON RD, SUITE 28D
+LINTHICUM HEIGHTS, MD 21090","PHILIP MORRIS EXTERNAL
+RESEARCH PROGRAM
+RESEARCH MANAGEMENT GROUP
+1099 WINTERSON RD, SUITE 280
+LINTHICUM HEIGHTS, MD 21090",high,"The invoice’s customer address in the TO block prints SUITE 280, not the label’s SUITE 28D."
+rest,d70aed3f484d4792909d5f96.pdf,vendor_address,"CHUM-Centre de recherche
+Hõpital Saint-Luc
+1058 St-Denis
+Montréal (Québec), H2X 3J4
+Att. Dr Gilles Bleau # 7597 | HÔPITAL SAINT-LUC
+1058, rue Saint-Denis
+Montréal (Québec)
+H2X 3J4 | HÔPITAL NOTRE-DAME
+1560, rue Sherbrooke Est
+Montréal (Québec)
+H2L 4M1 | HÔPITAL-DIEU
+3840, rue Saint-Urbain
+Montréal (Québec)
+H2W 1T8","CHUM-Centre de recherche, Hôpital Saint-Luc, 1058 St-Denis, Montréal (Québec), H2X 3J4",high,"The extractor matches the explicitly designated cheque-payable supplier address, while the label concatenates hospital footer addresses and incorrectly renders the printed HÔTEL-DIEU as HÔPITAL-DIEU."
+rest,d8774defb2fe41f189a5a99f.pdf,vendor_address,"Seven Ranges Radio, Inc.
+WRRR-FM
+P.O. Box 374
+St. Marys, WW 26170","P.O. Box 374, St. Marys, WV 26170",high,"The issuing vendor’s address is printed as P.O. Box 374, St. Marys, WV 26170, whereas the label incorrectly spells the state abbreviation as WW."
+rest,d9dd58983d7d47ae9a7fe52d.pdf,customer_billing_address,"3Q20 RD
+PORTLAND, ME","PHD, 195 BROADWAY, 5FL, NEW YORK, NY 10007, ATTN: MEDIA REC DEPT/FIN SHARED SRVC",high,"The label combines an estimate code and market rather than an address, while the document explicitly instructs vendors to use PHD's New York address on invoices."
+rest,d9fe9accad084cadaf361ec4.pdf,tax_detail_net,"$3,350.00","$2,847.50",high,"The label is printed as Gross Total, whereas $2,847.50 is explicitly printed as NET TOTAL alongside the sales tax summary."
+rest,d9fe9accad084cadaf361ec4.pdf,amount_total_gross,"$2,847.50","$3,350.00",high,"The document explicitly prints Gross Total as $3,350.00 with $0.00 sales tax, while $2,847.50 is the NET TOTAL after commission."
+rest,d9fe9accad084cadaf361ec4.pdf,amount_total_net,"$3,350.00","$2,847.50",high,"The invoice explicitly prints NET TOTAL as $2,847.50 with $0.00 sales tax, whereas $3,350.00 is the Gross Total before commission."
+rest,da88d515a0ba405b986e1daa.pdf,vendor_name,Green Juice Group,Total Traffic Network,high,"Total Traffic Network is the issuing supplier named in the contract confirmation header, while Green Juice Group is explicitly identified as the sponsor’s agency."
+rest,da88d515a0ba405b986e1daa.pdf,amount_total_gross,"2,618.00","3,080.00",high,"The Total Contract row prints 3,080.00 under Gross Amt, while the label 2,618.00 is the Net Amt."
+rest,da92073ad2f14a3291375aef.pdf,customer_other_address,"Private Adjudication Center
+110 Swit Ave., Suite Two
+Durham, NC 27705","Private Adjudication Center
+110 Swift Ave., Suite Two
+Durham, NC 27705",high,"The document prints “110 Swift Ave.” in both customer address blocks, not the label’s misspelled “110 Swit Ave.”"
+rest,dcaa66f23ef64a03a3ab02ce.pdf,vendor_name,Birmingham House,WBRC TV,high,"WBRC TV is the issuing station identified as the Property and in the WBRC header, while Birmingham House appears only as the account executive (AE), not the supplier company."
+rest,ddcd2521d6164d0db6cdd2e5.pdf,document_id,0000684293,0000884293,high,"The full document is a vendor remittance advice identifying check number 0000884293, not 0000684293; AUG2001 is the referenced invoice number."
+rest,ddcd2521d6164d0db6cdd2e5.pdf,date_due,10/08/01,,high,"No payment due date is printed; 10/09/01 is explicitly the payment date on the remittance advice, and 10/08/01 does not appear."
+rest,dedc334705bb4a1697e9b358.pdf,date_issue,6/02/99,5/26/99,high,"The document explicitly identifies 5/26/99 as the invoice date, whereas 6/02/99 is the copy date."
+rest,dedc334705bb4a1697e9b358.pdf,document_id,7042785680 | 7042785688,7042785680,high,"The full document repeatedly prints invoice number 7042785680, including in the remittance string, but does not support the label's additional 7042785688 or the extractor's 7042785683."
+rest,dedc334705bb4a1697e9b358.pdf,customer_billing_address,"BRYAN CTR
+725 BR0AD ST
+DURHAM NC 27705","DUKE UNIV
+BRYAN CTR
+725 BROAD ST
+DURHAM NC 27705",high,"The BILL TO block prints 725 BROAD ST, not the label's 725 BR0AD ST, and supports the extractor's billing address."
+rest,def10b37f0f445e89bfc9a50.pdf,document_id,DPMO702-2,DPM0702-2,low,"The printed invoice number is DPM0702-2, with a zero after DPM, not the letter O used in the label."
+rest,e07933b77efa464abf2c26d8.pdf,order_id,N41320,2144,high,"The customer's purchase order number is explicitly printed as 2144, while N41320 is identified as the vendor's job number."
+rest,e16ede54820f4bd28975dd02.pdf,customer_billing_address,"VALUED PHILIP MORRIS CUSTOMER
+BPP 0 DAYS ALL
+ANYTOWN, USA","VALUED PHILIP MORRIS CUSTOMER
+EPP 0 DAYS ALL
+ANYTOWN, USA",high,"The customer address in the document reads 'EPP 0 DAYS ALL', not the label's 'BPP 0 DAYS ALL' or the extractor's 'BPP O S AL'."
+rest,e16ede54820f4bd28975dd02.pdf,customer_id,99998,,high,The document does not print customer ID 99998 or identify any other number as the vendor-assigned customer ID.
+rest,e3b6f692ca4041d4b20fe6bf.pdf,customer_delivery_address,"JENNIE LAVITA
+PSILON
+50 CAMBRIDGE ST
+BURLINGTON MA 01803","JENNIE LAVITA
+EPSILON
+50 CAMBRIDGE ST
+BURLINGTON MA 01803",high,"The ship-to block prints EPSILON, not the label's misspelled PSILON, and includes JENNIE LAVITA above the address."
+rest,e3b6f692ca4041d4b20fe6bf.pdf,order_id,N41319,2140,high,"2140 is printed under PURCHASE ORDER NUMBER, matching the buyer's order/reference field, whereas N41319 is identified as JOB NO."
+rest,e85de5f667cb4b69a9a1eb2b.pdf,customer_id,100870 024,100070 024,high,"The document prints 'Client #: 100070 024', which supports the extractor rather than the label '100870 024'."
+rest,eca4b39bb8d8413dbb5fb726.pdf,document_id,0O342638SEP20210CT2021,00342638SEP2021OCT2021,low,"The printed Invoice Number is 00342638SEP2021OCT2021, matching the extractor, while the label substitutes an O for the second zero and a zero for the O in OCT."
+rest,efe3fb1cbf144c55beef94d1.pdf,amount_total_gross,$25.50,$30.00,high,"The summary explicitly prints Total Gross as $30.00, while $25.50 is the Total Net after the $4.50 agency discount."
+rest,f455d95792294b069639dd50.pdf,vendor_order_id,1017780,955281,high,"The document explicitly prints 955281 as 'Order #', whereas 1017780 is the 'Advertiser Ref', not the vendor's own order identifier."
+rest,f58ada0d449548fa91696a12.pdf,amount_total_net,$0.00,$246.51,high,"The printed net total is $246.51, shown as the Nontaxable Total with zero sales tax; $0.00 is only the Taxable Total or Sales Tax Total."
+rest,f6fa97a83b8246a196a5217b.pdf,vendor_name,"Augusta-Waterville, ME",,high,"Augusta-Waterville, ME is the market, not a company, and MEDIA FINANCIAL SERVICES is the agency/invoice recipient; no issuing vendor or supplier is identified in the text."
+rest,f7637920c0854d95b98792fc.pdf,customer_id,0947951,0017951,high,"The full document text lists customer number 0017951, whereas 0947951 appears beside CONTRACT NUMBER in the supplied snippet and 6661 is not supported as the customer number."
+rest,f7fb99fe214443f0b35377a0.pdf,customer_billing_address,"4Q20 RD
+PORTLAND, ME","PHD
+195 BROADWAY, 5FL
+NEW YORK, NY 10007
+ATTN: MEDIA REC DEPT/FIN SHARED SRVC",high,"The label combines estimate and market fields rather than an address, while the document explicitly directs vendor invoices to PHD at 195 Broadway, making that the billing address rather than the extractor's general agency address."
+rest,f7fb99fe214443f0b35377a0.pdf,vendor_name,SPOT RADIO,WTHT-F,high,"SPOT RADIO describes the media type, not a company, while WTHT-F is the named station supplying the purchased advertising."
+rest,f86603b3e7d94002b24097b5.pdf,vendor_address,"901 West Bond St., Lincoin, NE 68521 | P.O. BOX 73774, CHICAGO, IL 60673-7774","901 West Bond St., Lincoln, NE 68521",high,The label misspells the printed city 'Lincoln' as 'Lincoin' and appends a separate remittance address to the vendor's issuing address.
+rest,f86603b3e7d94002b24097b5.pdf,order_id,N41155,RILLARD - PROJECT 2132,high,"N41155 is identified as the supplier's JOB NO., whereas RILLARD - PROJECT 2132 is the printed customer project reference."
+rest,ff1c381e71db45aa91e0291a.pdf,customer_billing_name,GCl,GCI,low,"The invoice identifies the billed client as GCI, not GCl with a lowercase final letter."
