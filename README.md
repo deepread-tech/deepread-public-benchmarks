@@ -15,9 +15,9 @@ own API keys; no key of ours is in here.
 
 | Benchmark | Documents | Task | Dataset (download) | Original source |
 |---|---:|---|---|---|
-| **Kleister-Charity** | 440 (dev-0) | UK charity annual reports, multi-page scans; 8 fields: charity name and number, its street, town and postcode, report date, annual income and spending | [deepread-tech/kleister-charity-dev0](https://huggingface.co/datasets/deepread-tech/kleister-charity-dev0) | [applicaai/kleister-charity](https://github.com/applicaai/kleister-charity) `2309f486` |
+| **Kleister-Charity** | 440 (dev-0) | UK charity annual reports, multi-page scans; 8 fields: charity name and number, its street, town and postcode, report date, annual income and spending | [DeepRead/kleister-charity-dev0](https://huggingface.co/datasets/DeepRead/kleister-charity-dev0) | [applicaai/kleister-charity](https://github.com/applicaai/kleister-charity) `2309f486` |
 | **DocILE** | 500 (validation) | invoices and business documents, 1–3 pages; 33 field types: ids, dates, vendor and customer names and addresses, amounts, tax details, bank details | from Rossum with your own token — their terms allow no re-hosting | [rossumai/docile](https://github.com/rossumai/docile), token from [docile.rossum.ai](https://docile.rossum.ai) |
-| **LongExtractBench** | 50 (public subset) | long, table-heavy reports (statistical releases, 10-K/10-Q filings, clinical and regulatory reports), 22 to 11,622 pages; one schema per document with large row arrays | [deepread-tech/longextract-bench-50](https://huggingface.co/datasets/deepread-tech/longextract-bench-50) (mirror) | [micro1-inc/longextract-bench-50](https://huggingface.co/datasets/micro1-inc/longextract-bench-50) `d4ca332f` |
+| **LongExtractBench** | 50 (public subset) | long, table-heavy reports (statistical releases, 10-K/10-Q filings, clinical and regulatory reports), 22 to 11,622 pages; one schema per document with large row arrays | [DeepRead/longextract-bench-50](https://huggingface.co/datasets/DeepRead/longextract-bench-50) (mirror) | [micro1-inc/longextract-bench-50](https://huggingface.co/datasets/micro1-inc/longextract-bench-50) `d4ca332f` |
 
 Each Hugging Face dataset card lists every file and where it came from;
 [`scripts/build_hf_datasets.py`](scripts/build_hf_datasets.py) is the code

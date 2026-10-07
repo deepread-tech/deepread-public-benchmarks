@@ -2,7 +2,7 @@
 
 Source: https://github.com/applicaai/kleister-charity at commit 2309f486
 (2021-08-18, the latest). `drbench fetch charity` downloads DeepRead's copy on
-Hugging Face, https://huggingface.co/datasets/deepread-tech/kleister-charity-dev0,
+Hugging Face, https://huggingface.co/datasets/DeepRead/kleister-charity-dev0,
 which holds the 440 PDFs, the official `expected.tsv`, the document order, our
 errata and the schema; `scripts/build_hf_datasets.py` is how that copy was
 assembled from the original repository and Applica's public S3 bucket.
@@ -28,7 +28,7 @@ from typing import Any
 from .. import repo_root
 from .base import Column, Doc
 
-HF_REPO = "deepread-tech/kleister-charity-dev0"
+HF_REPO = "DeepRead/kleister-charity-dev0"
 HF_REVISION: str | None = None  # pinned to a commit once the dataset is uploaded
 
 FIELDS = (

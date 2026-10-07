@@ -4,7 +4,7 @@ pages, median 86) with one JSON Schema and one answer key each.
 Source: https://huggingface.co/datasets/micro1-inc/longextract-bench-50, labels
 CC-BY-4.0 by micro1 (the PDFs are public documents that keep their own rights),
 revision d4ca332f. `drbench fetch longextract` downloads DeepRead's byte-identical
-mirror of that revision, https://huggingface.co/datasets/deepread-tech/longextract-bench-50
+mirror of that revision, https://huggingface.co/datasets/DeepRead/longextract-bench-50
 (built by `scripts/build_hf_datasets.py`). Benchmark and grader:
 https://github.com/micro1-research/longextract-bench (MIT). The benchmark was
 commissioned by Reducto and audited by micro1; the ground truth is model-drafted
@@ -26,7 +26,7 @@ from typing import Any
 from ..graders.longextract_grading import _collapse, grade, unwrap
 from .base import Column, Doc
 
-HF_REPO = "deepread-tech/longextract-bench-50"
+HF_REPO = "DeepRead/longextract-bench-50"
 HF_REVISION: str | None = None  # pinned to a commit once the mirror is uploaded
 UPSTREAM = "micro1-inc/longextract-bench-50"
 UPSTREAM_REVISION = "d4ca332f72f6d3649ecd11b69445a8f4ef5fcb02"

@@ -5,8 +5,8 @@ benchmark's original source (pinned), plus the schema and label errata kept in
 this repository. Run it, then upload each folder:
 
     python scripts/build_hf_datasets.py                 # writes hf/<dataset>/
-    hf upload deepread-tech/kleister-charity-dev0 hf/kleister-charity-dev0 --repo-type dataset
-    hf upload deepread-tech/longextract-bench-50  hf/longextract-bench-50  --repo-type dataset
+    hf upload DeepRead/kleister-charity-dev0 hf/kleister-charity-dev0 --repo-type dataset
+    hf upload DeepRead/longextract-bench-50  hf/longextract-bench-50  --repo-type dataset
 
 DocILE is not assembled: its terms forbid redistribution, so `drbench fetch
 docile` downloads it from Rossum with the user's own token.

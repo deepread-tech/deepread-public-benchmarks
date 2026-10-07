@@ -10,9 +10,9 @@ our label errata.
 
 | Dataset | Split | Documents | Pages | Fields | Download | Original / pin | Licence |
 |---|---|---|---|---|---|---|---|
-| Kleister-Charity | dev-0 | 440 | multi-page annual reports | 8 scalars | [deepread-tech/kleister-charity-dev0](https://huggingface.co/datasets/deepread-tech/kleister-charity-dev0) | [applicaai/kleister-charity](https://github.com/applicaai/kleister-charity) @ `2309f486` | no licence file; public UK Charity Commission filings |
+| Kleister-Charity | dev-0 | 440 | multi-page annual reports | 8 scalars | [DeepRead/kleister-charity-dev0](https://huggingface.co/datasets/DeepRead/kleister-charity-dev0) | [applicaai/kleister-charity](https://github.com/applicaai/kleister-charity) @ `2309f486` | no licence file; public UK Charity Commission filings |
 | DocILE | validation | 500 | 1–3 page business documents | 33 KILE field types | your own token ([access form](https://docile.rossum.ai)) | [rossumai/docile](https://github.com/rossumai/docile), dataset v1.0 | non-commercial research only, no redistribution |
-| LongExtractBench (public subset) | the 50 public documents | 50 | 22–11,622 pages, median 86 | per-document schema, large row arrays | [deepread-tech/longextract-bench-50](https://huggingface.co/datasets/deepread-tech/longextract-bench-50) (mirror) | [micro1-inc/longextract-bench-50](https://huggingface.co/datasets/micro1-inc/longextract-bench-50) @ `d4ca332f` | labels CC-BY-4.0; PDFs keep their original rights |
+| LongExtractBench (public subset) | the 50 public documents | 50 | 22–11,622 pages, median 86 | per-document schema, large row arrays | [DeepRead/longextract-bench-50](https://huggingface.co/datasets/DeepRead/longextract-bench-50) (mirror) | [micro1-inc/longextract-bench-50](https://huggingface.co/datasets/micro1-inc/longextract-bench-50) @ `d4ca332f` | labels CC-BY-4.0; PDFs keep their original rights |
 
 ## Kleister-Charity
 
@@ -23,7 +23,7 @@ server (gonito.net) is offline, so `dev-0` is the largest split anyone can
 score.
 
 `drbench fetch charity` downloads
-[deepread-tech/kleister-charity-dev0](https://huggingface.co/datasets/deepread-tech/kleister-charity-dev0)
+[DeepRead/kleister-charity-dev0](https://huggingface.co/datasets/DeepRead/kleister-charity-dev0)
 (1.7 GB): the 440 PDFs, `documents.txt` (the official order), the official
 `expected.tsv`, our corrected labels and errata, and the schema. The copy was
 assembled by `scripts/build_hf_datasets.py` from the Kleister repository at the
@@ -80,7 +80,7 @@ audited by micro1; the methodology and grader are published at
 <https://github.com/micro1-research/longextract-bench>.
 
 `drbench fetch longextract` downloads
-[deepread-tech/longextract-bench-50](https://huggingface.co/datasets/deepread-tech/longextract-bench-50)
+[DeepRead/longextract-bench-50](https://huggingface.co/datasets/DeepRead/longextract-bench-50)
 (~360 MB), a byte-identical mirror of micro1's revision `d4ca332f` with
 micro1's dataset card kept on it, so the benchmark pins one stable copy. No
 account is needed.
