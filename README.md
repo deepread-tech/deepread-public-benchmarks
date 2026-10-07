@@ -17,9 +17,9 @@ could not process counts as all wrong.
 
 | Benchmark | DeepRead `extract` | DeepRead `deep-extract` | Reducto Deep Extract | LandingAI ADE |
 |---|---:|---:|---:|---:|
-| Kleister-Charity — 440 UK charity reports, 8 fields | 95%* | 95%* | 90%* | pending |
-| DocILE — 500 invoices and business documents, 33 fields | 95%* | 95%* | 90%* | pending |
-| LongExtractBench — 50 long reports (22 to 11,622 pages), tables | 95%* | 95%* | 90%* | pending |
+| Kleister-Charity — 440 UK charity reports, 8 fields | 95%* | 95%* | 90%* | 87%* |
+| DocILE — 500 invoices and business documents, 33 fields | 95%* | 95%* | 90%* | 87%* |
+| LongExtractBench — 50 long reports (22 to 11,622 pages), tables | 95%* | 95%* | 90%* | 87%* |
 
 \* placeholder, replaced by the committed run. Run date and vendor job ids
 are stored with every run in `runs/`.
