@@ -1,0 +1,37 @@
+{
+  "type": "object",
+  "properties": {
+    "charity_name": {
+      "type": "string",
+      "description": "The registered name of the charitable organisation (e.g. 'The Sanata Charitable Trust'). Usually near the top of the report or in the header of the trustees' annual report."
+    },
+    "charity_number": {
+      "type": "string",
+      "description": "The registered charity number assigned by the UK Charity Commission (5-7 digit number, often labelled 'Charity Number' or 'Registered Charity Number')."
+    },
+    "address__street_line": {
+      "type": "string",
+      "description": "The street line of the charitable organisation's own address (NOT other addresses such as banks or auditors). Usually in the header or contact block."
+    },
+    "address__post_town": {
+      "type": "string",
+      "description": "The post town of the charitable organisation's address, in UPPER CASE (e.g. 'LONDON', 'SHREWSBURY')."
+    },
+    "address__postcode": {
+      "type": "string",
+      "description": "The UK postcode of the charitable organisation's address (e.g. 'SY3 7PQ')."
+    },
+    "report_date": {
+      "type": "string",
+      "description": "The reporting/financial year end date of the annual document in ISO format YYYY-MM-DD. Convert from other formats carefully."
+    },
+    "income_annually_in_british_pounds": {
+      "type": "number",
+      "description": "The annual INCOME of the charity in GBP as a number with two decimals (e.g. 255653.00). Look for 'Total incoming resources', 'Income', or the accounts summary."
+    },
+    "spending_annually_in_british_pounds": {
+      "type": "number",
+      "description": "The annual SPENDING of the charity in GBP as a number with two decimals (e.g. 258287.00). Look for 'Total resources expended', 'Total expenditure', or the accounts summary."
+    }
+  }
+}
