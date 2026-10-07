@@ -61,6 +61,7 @@ def run(
         left = len(todo) - counts["ok"] - counts["failed"]
         print(f"stopped: {counts['ok']} ok, {counts['failed']} failed, {left} not attempted — rerun the same "
               f"command to continue once the account is fixed")
+        counts["stopped"] = left
         return counts
     print(f"done: {counts['ok']} ok, {counts['failed']} failed, {counts['skipped']} skipped")
     return counts

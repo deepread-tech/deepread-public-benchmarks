@@ -51,8 +51,10 @@ def main(argv: list[str] | None = None) -> int:
         docs = dataset.docs(args.data)
         if args.limit:
             docs = docs[: args.limit]
-        run(dataset, make(args.system), docs, args.runs, concurrency=args.concurrency, retries=args.retries,
-            force=args.force, retry_failures=args.retry_failures)
+        counts = run(dataset, make(args.system), docs, args.runs, concurrency=args.concurrency,
+                     retries=args.retries, force=args.force, retry_failures=args.retry_failures)
+        if counts.get("stopped"):
+            return 1  # so a chain of commands halts here instead of running on
     elif args.command == "grade":
         from .score import score
 
