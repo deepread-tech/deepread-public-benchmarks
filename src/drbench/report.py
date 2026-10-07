@@ -24,7 +24,7 @@ def table(dataset: Dataset, scores: dict) -> str:
     lines = [f"### {dataset.title}{label_note}", ""]
     lines.append("| System | " + " | ".join(c.label for c in dataset.columns) + " |")
     lines.append("|---|" + "|".join("---:" for _ in dataset.columns) + "|")
-    ranked = sorted(scores["systems"].items(), key=lambda kv: -(kv[1]["summary"].get(dataset.columns[1].key) or 0))
+    ranked = sorted(scores["systems"].items(), key=lambda kv: -(kv[1]["summary"].get("accuracy") or 0))
     total = scores.get("documents")
     for system, data in ranked:
         summary = data["summary"]

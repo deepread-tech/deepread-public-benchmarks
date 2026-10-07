@@ -23,7 +23,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from ..graders.longextract_grading import _collapse, grade, unwrap
+from ..graders.longextract_grading import _arrays, _collapse, _count_leaves, _match_rows, grade, infer_row_key, unwrap
 from .base import Column, Doc
 
 HF_REPO = "DeepRead/longextract-bench-50"
@@ -36,11 +36,8 @@ class LongExtract:
     name = "longextract"
     title = "LongExtractBench (public subset, 50 documents)"
     columns = (
-        Column("completed", "Completed", "int"),
-        Column("row_precision", "Row precision"),
-        Column("row_recall", "Row recall"),
-        Column("leaf_accuracy", "Leaf accuracy"),
-        Column("latency_p50", "Median latency", "seconds"),
+        Column("accuracy", "Accuracy"),
+        Column("completed", "Documents completed", "int"),
     )
 
     def fetch(self, data_dir: Path, **_: Any) -> None:
@@ -72,8 +69,22 @@ class LongExtract:
     def grade(self, pred: dict, ground_truth: Any, schema: dict) -> dict:
         gt = _collapse(unwrap(ground_truth))
         gt = gt.get("result", gt) if isinstance(gt, dict) and "result" in gt and len(gt) == 1 else gt
-        scores = grade(_collapse(pred), gt, schema)
+        pred = _collapse(pred)
+        pred = pred if isinstance(pred, dict) else {}
+        scores = grade(pred, gt, schema)
+        # micro1's leaf accuracy covers only the rows the system matched; the headline
+        # also charges every value of the answer-key rows it missed, so it reads as
+        # "answer-key values the system got right" like the other two benchmarks.
+        missed = 0
+        for arr in _arrays(schema):
+            g = [r for r in (gt.get(arr, []) or []) if isinstance(r, dict)]
+            p = [r for r in (pred.get(arr, []) or []) if isinstance(r, dict)]
+            if g:
+                _pairs, _unmatched_pred, unmatched_gt = _match_rows(p, g, infer_row_key(p, g))
+                missed += sum(_count_leaves(row) for row in unmatched_gt)
+        total = scores["leaf_total"] + missed
         return {
+            "accuracy": scores["leaf_match"] / total if total else 0.0,
             "row_precision": scores["precision"],
             "row_recall": scores["recall"],
             "leaf_accuracy": scores["leaf_accuracy"] / 100,
@@ -82,14 +93,18 @@ class LongExtract:
             "matched_rows": scores["matched"],
             "leaf_total": scores["leaf_total"],
             "leaf_match": scores["leaf_match"],
+            "missed_row_leaves": missed,
         }
 
     def aggregate(self, per_doc: list[dict]) -> dict:
         done = [d for d in per_doc if d.get("state") == "success"]
-        mean = lambda key: sum(d[key] for d in done) / len(done) if done else 0.0  # noqa: E731
+        mean_done = lambda key: sum(d[key] for d in done) / len(done) if done else 0.0  # noqa: E731
         return {
             "documents": len(per_doc),
-            "row_precision": mean("row_precision"),
-            "row_recall": mean("row_recall"),
-            "leaf_accuracy": mean("leaf_accuracy"),
+            # the headline: per-document accuracy averaged over all 50 documents, a failed one counting 0
+            "accuracy": sum(d["accuracy"] for d in per_doc) / len(per_doc) if per_doc else 0.0,
+            # micro1's three numbers, over completed documents as on their leaderboard
+            "row_precision": mean_done("row_precision"),
+            "row_recall": mean_done("row_recall"),
+            "leaf_accuracy": mean_done("leaf_accuracy"),
         }

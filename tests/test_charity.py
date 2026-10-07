@@ -48,6 +48,7 @@ def test_reproduces_geval_on_corrected_labels():
     assert _close(s["f1"], 76.5)
     assert _close(s["mean_f1_uc"], 84.2)
     assert _close(s["accuracy_uc"], 22.7, ACC_TOL)
+    assert s["accuracy"] == s["recall_uc"]  # the headline is "answer-key values got right"
     geval_fields = {
         "address__post_town": 92.9, "address__postcode": 91.8, "address__street_line": 41.3,
         "charity_name": 66.3, "charity_number": 98.85, "report_date": 98.0,
