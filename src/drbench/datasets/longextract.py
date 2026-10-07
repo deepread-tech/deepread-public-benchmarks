@@ -3,7 +3,9 @@ pages, median 86) with one JSON Schema and one answer key each.
 
 Source: https://huggingface.co/datasets/micro1-inc/longextract-bench-50, labels
 CC-BY-4.0 by micro1 (the PDFs are public documents that keep their own rights),
-pinned to revision d4ca332f. Benchmark and grader:
+revision d4ca332f. `drbench fetch longextract` downloads DeepRead's byte-identical
+mirror of that revision, https://huggingface.co/datasets/deepread-tech/longextract-bench-50
+(built by `scripts/build_hf_datasets.py`). Benchmark and grader:
 https://github.com/micro1-research/longextract-bench (MIT). The benchmark was
 commissioned by Reducto and audited by micro1; the ground truth is model-drafted
 and human-reconciled.
@@ -24,8 +26,10 @@ from typing import Any
 from ..graders.longextract_grading import _collapse, grade, unwrap
 from .base import Column, Doc
 
-REPO_ID = "micro1-inc/longextract-bench-50"
-REVISION = "d4ca332f72f6d3649ecd11b69445a8f4ef5fcb02"
+HF_REPO = "deepread-tech/longextract-bench-50"
+HF_REVISION: str | None = None  # pinned to a commit once the mirror is uploaded
+UPSTREAM = "micro1-inc/longextract-bench-50"
+UPSTREAM_REVISION = "d4ca332f72f6d3649ecd11b69445a8f4ef5fcb02"
 
 
 class LongExtract:
@@ -43,8 +47,8 @@ class LongExtract:
         from huggingface_hub import snapshot_download
 
         local = data_dir / self.name
-        print(f"downloading {REPO_ID} @ {REVISION[:8]} (~360 MB)")
-        snapshot_download(repo_id=REPO_ID, repo_type="dataset", revision=REVISION, local_dir=str(local))
+        print(f"downloading {HF_REPO} (mirror of {UPSTREAM} @ {UPSTREAM_REVISION[:8]}, ~360 MB)")
+        snapshot_download(repo_id=HF_REPO, repo_type="dataset", revision=HF_REVISION, local_dir=str(local))
         print(f"ready: {local}")
 
     def docs(self, data_dir: Path, labels: str = "official") -> list[Doc]:

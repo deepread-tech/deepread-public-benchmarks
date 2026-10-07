@@ -1,11 +1,13 @@
 """Kleister-Charity, dev-0 split: 440 UK charity annual reports, 8 fields.
 
 Source: https://github.com/applicaai/kleister-charity at commit 2309f486
-(2021-08-18, the latest). The document list (`dev-0/in.tsv.xz`) and labels
-(`dev-0/expected.tsv`) come from that repo; the PDFs are git-annex objects in
-Applica's public S3 bucket and are downloaded from there directly, so git-annex
-is not required. `test-A` labels were never released and the scoring server
-(gonito.net) is offline, so dev-0 is the largest split anyone can score.
+(2021-08-18, the latest). `drbench fetch charity` downloads DeepRead's copy on
+Hugging Face, https://huggingface.co/datasets/deepread-tech/kleister-charity-dev0,
+which holds the 440 PDFs, the official `expected.tsv`, the document order, our
+errata and the schema; `scripts/build_hf_datasets.py` is how that copy was
+assembled from the original repository and Applica's public S3 bucket.
+`test-A` labels were never released and the scoring server (gonito.net) is
+offline, so dev-0 is the largest split anyone can score.
 
 Metric: the benchmark's own one, MultiLabel-F1 over upper-cased `field=value`
 labels ("F1 (UC)" in the Kleister `config.txt`), computed over all 440 documents
@@ -17,26 +19,17 @@ checked against GEval 1.14.2.0 output in tests/test_charity.py.
 
 from __future__ import annotations
 
-import concurrent.futures as cf
 import json
-import lzma
-import os
 import re
-import subprocess
-import sys
 from datetime import date
 from pathlib import Path
 from typing import Any
 
-import httpx
-
 from .. import repo_root
 from .base import Column, Doc
 
-REPO_URL = "https://github.com/applicaai/kleister-charity"
-COMMIT = "2309f4861cc49864ac653a7fa108efc2144400b3"
-S3_PREFIX = "https://applica-public.s3-eu-west-1.amazonaws.com/kleister-charity-git-annex/"
-SPARSE_PATHS = ("/config.txt", "/in-header.tsv", "/README.md", "/dev-0/expected.tsv", "/dev-0/in.tsv.xz", "/documents/")
+HF_REPO = "deepread-tech/kleister-charity-dev0"
+HF_REVISION: str | None = None  # pinned to a commit once the dataset is uploaded
 
 FIELDS = (
     "address__post_town",
@@ -99,8 +92,7 @@ def normalise(field: str, value: Any) -> str | None:
     if isinstance(value, dict):  # a wrapped value some APIs return
         return normalise(field, value.get("value"))
     if isinstance(value, list):
-        value = value[0] if value else None
-        return normalise(field, value)
+        return normalise(field, value[0] if value else None)
     if "date" in field:
         out = iso_date(value)
     elif field.endswith("_in_british_pounds"):
@@ -168,34 +160,22 @@ class Charity:
 
     # -- data ---------------------------------------------------------------------
 
-    def fetch(self, data_dir: Path, workers: int = 8, **_: Any) -> None:
-        root = data_dir / self.name
-        repo = root / "kleister-charity"
-        if not (repo / "dev-0" / "expected.tsv").is_file():
-            root.mkdir(parents=True, exist_ok=True)
-            print(f"cloning {REPO_URL} @ {COMMIT[:8]} (labels and document list only)")
-            _git("clone", "--no-checkout", "--filter=blob:none", REPO_URL, str(repo))
-            _git("-C", str(repo), "sparse-checkout", "set", "--no-cone", *SPARSE_PATHS)
-            _git("-C", str(repo), "checkout", "--quiet", COMMIT)
-        names = self._names(repo)
-        pdfs = root / "pdfs"
-        pdfs.mkdir(exist_ok=True)
-        todo = [n for n in names if not _complete(pdfs / n, _annex_key(repo, n))]
-        print(f"{len(names)} dev-0 documents, {len(names) - len(todo)} already present, fetching {len(todo)}")
-        with httpx.Client(timeout=120, follow_redirects=True) as client, cf.ThreadPoolExecutor(workers) as pool:
-            futures = {pool.submit(_download, client, _annex_key(repo, n), pdfs / n): n for n in todo}
-            for i, future in enumerate(cf.as_completed(futures), 1):
-                future.result()
-                if i % 50 == 0 or i == len(todo):
-                    print(f"  {i}/{len(todo)}", flush=True)
-        print(f"ready: {pdfs}")
+    def fetch(self, data_dir: Path, **_: Any) -> None:
+        from huggingface_hub import snapshot_download
+
+        local = data_dir / self.name
+        print(f"downloading {HF_REPO} (440 PDFs, ~1.7 GB)")
+        snapshot_download(repo_id=HF_REPO, repo_type="dataset", revision=HF_REVISION, local_dir=str(local))
+        print(f"ready: {local}")
 
     def docs(self, data_dir: Path, labels: str = "official") -> list[Doc]:
-        root = data_dir / self.name
-        repo = root / "kleister-charity"
-        names = self._names(repo)
+        local = data_dir / self.name
+        names_file = local / "documents.txt"
+        if not names_file.is_file():
+            raise FileNotFoundError(f"{names_file} — run `drbench fetch charity` first")
+        names = names_file.read_text().split()
         if labels == "official":
-            expected = repo / "dev-0" / "expected.tsv"
+            expected = local / "expected.tsv"
         elif labels == "corrected":
             expected = repo_root() / "datasets" / "charity" / "errata" / "dev-0.expected.corrected.tsv"
         else:
@@ -205,14 +185,9 @@ class Charity:
             raise RuntimeError(f"{expected}: {len(lines)} lines for {len(names)} documents")
         schema = json.loads((repo_root() / "datasets" / "charity" / "schema.json").read_text())
         return [
-            Doc(id=name.removesuffix(".pdf"), pdf=root / "pdfs" / name, schema=schema, ground_truth=line.split())
+            Doc(id=name.removesuffix(".pdf"), pdf=local / "pdfs" / name, schema=schema, ground_truth=line.split())
             for name, line in zip(names, lines)
         ]
-
-    @staticmethod
-    def _names(repo: Path) -> list[str]:
-        with lzma.open(repo / "dev-0" / "in.tsv.xz", "rt", encoding="utf-8") as f:
-            return [line.split("\t", 1)[0] for line in f if line.strip()]
 
     # -- scoring ------------------------------------------------------------------
 
@@ -243,44 +218,3 @@ class Charity:
                 sum(c["tp"] for c in counts), sum(c["fp"] for c in counts), sum(c["fn"] for c in counts)
             )
         return out
-
-
-# --- fetch helpers ---------------------------------------------------------------------
-
-
-def _git(*args: str) -> None:
-    subprocess.run(["git", *args], check=True)
-
-
-def _annex_key(repo: Path, name: str) -> str:
-    """`documents/<name>` is a git-annex symlink; the object key is the link's basename."""
-    link = repo / "documents" / name
-    target = os.readlink(link) if link.is_symlink() else link.read_text().strip()  # Windows: a text file
-    return Path(target).name
-
-
-def _annex_size(key: str) -> int | None:
-    m = re.search(r"-s(\d+)-", key)
-    return int(m.group(1)) if m else None
-
-
-def _complete(path: Path, key: str) -> bool:
-    size = _annex_size(key)
-    return path.is_file() and (size is None or path.stat().st_size == size)
-
-
-def _download(client: httpx.Client, key: str, dst: Path) -> None:
-    tmp = dst.with_suffix(".tmp")
-    for attempt in range(4):
-        try:
-            with client.stream("GET", S3_PREFIX + key) as r:
-                r.raise_for_status()
-                with open(tmp, "wb") as f:
-                    for chunk in r.iter_bytes(1 << 16):
-                        f.write(chunk)
-            if _complete(tmp, key):
-                tmp.replace(dst)
-                return
-        except httpx.HTTPError as e:
-            print(f"  retry {dst.name}: {e}", file=sys.stderr)
-    raise RuntimeError(f"could not download {dst.name}")

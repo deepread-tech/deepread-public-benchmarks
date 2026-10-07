@@ -1,15 +1,18 @@
 # Datasets
 
-Three public benchmarks, pinned to exact versions. This repository ships no
-documents: `drbench fetch` downloads each dataset from its source (DocILE with
-your own token). What is committed here is the JSON Schema each system
-receives, the document lists, and our label errata.
+Three public benchmarks, pinned to exact versions. `drbench fetch` downloads
+Kleister-Charity and LongExtractBench from DeepRead's Hugging Face datasets
+(copies of the originals, assembled by `scripts/build_hf_datasets.py`, every
+file's origin listed on the dataset card) and DocILE from Rossum with your own
+token, because its terms allow no re-hosting. What is committed in this
+repository is the JSON Schema each system receives, the document lists, and
+our label errata.
 
-| Dataset | Split | Documents | Pages | Fields | Source / pin | Licence |
-|---|---|---|---|---|---|---|
-| Kleister-Charity | dev-0 | 440 | multi-page annual reports | 8 scalars | [applicaai/kleister-charity](https://github.com/applicaai/kleister-charity) @ `2309f486` | no licence file; public UK Charity Commission filings |
-| DocILE | validation | 500 | 1–3 page business documents | 33 KILE field types | [rossumai/docile](https://github.com/rossumai/docile), dataset v1.0 | non-commercial research only, no redistribution ([access form](https://docile.rossum.ai)) |
-| LongExtractBench (public subset) | the 50 public documents | 50 | 22–11,622 pages, median 86 | per-document schema, large row arrays | [micro1-inc/longextract-bench-50](https://huggingface.co/datasets/micro1-inc/longextract-bench-50) @ `d4ca332f` | labels CC-BY-4.0; PDFs keep their original rights |
+| Dataset | Split | Documents | Pages | Fields | Download | Original / pin | Licence |
+|---|---|---|---|---|---|---|---|
+| Kleister-Charity | dev-0 | 440 | multi-page annual reports | 8 scalars | [deepread-tech/kleister-charity-dev0](https://huggingface.co/datasets/deepread-tech/kleister-charity-dev0) | [applicaai/kleister-charity](https://github.com/applicaai/kleister-charity) @ `2309f486` | no licence file; public UK Charity Commission filings |
+| DocILE | validation | 500 | 1–3 page business documents | 33 KILE field types | your own token ([access form](https://docile.rossum.ai)) | [rossumai/docile](https://github.com/rossumai/docile), dataset v1.0 | non-commercial research only, no redistribution |
+| LongExtractBench (public subset) | the 50 public documents | 50 | 22–11,622 pages, median 86 | per-document schema, large row arrays | [deepread-tech/longextract-bench-50](https://huggingface.co/datasets/deepread-tech/longextract-bench-50) (mirror) | [micro1-inc/longextract-bench-50](https://huggingface.co/datasets/micro1-inc/longextract-bench-50) @ `d4ca332f` | labels CC-BY-4.0; PDFs keep their original rights |
 
 ## Kleister-Charity
 
@@ -19,11 +22,14 @@ income and spending. `test-A` labels were never published and the scoring
 server (gonito.net) is offline, so `dev-0` is the largest split anyone can
 score.
 
-`drbench fetch charity` does a blob-less clone of the repository at the pinned
-commit for the labels and document list, then downloads the 440 PDFs from
-Applica's public S3 bucket — they are git-annex objects, and the object key is
-the target of each `documents/<name>` symlink, so git-annex is not needed.
-About 1 GB.
+`drbench fetch charity` downloads
+[deepread-tech/kleister-charity-dev0](https://huggingface.co/datasets/deepread-tech/kleister-charity-dev0)
+(1.7 GB): the 440 PDFs, `documents.txt` (the official order), the official
+`expected.tsv`, our corrected labels and errata, and the schema. The copy was
+assembled by `scripts/build_hf_datasets.py` from the Kleister repository at the
+pinned commit: labels and document list from a blob-less clone, PDFs from
+Applica's public S3 bucket, where they are git-annex objects whose key is the
+target of each `documents/<name>` symlink. Nothing was altered.
 
 Schema: `datasets/charity/schema.json` — the eight fields with a one-sentence
 description each. Errata: `datasets/charity/errata/label_fixes.csv` (336
@@ -73,8 +79,11 @@ reconciled; median ~640 KB). The benchmark was commissioned by Reducto and
 audited by micro1; the methodology and grader are published at
 <https://github.com/micro1-research/longextract-bench>.
 
-`drbench fetch longextract` downloads the pinned revision from Hugging Face
-(~360 MB). No account is needed.
+`drbench fetch longextract` downloads
+[deepread-tech/longextract-bench-50](https://huggingface.co/datasets/deepread-tech/longextract-bench-50)
+(~360 MB), a byte-identical mirror of micro1's revision `d4ca332f` with
+micro1's dataset card kept on it, so the benchmark pins one stable copy. No
+account is needed.
 
 Note the sizes: 19,528 pages in total, one document of 11,622 pages. APIs
 with page limits will fail some documents — that is reported as a failure, not
