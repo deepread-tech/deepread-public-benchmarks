@@ -27,7 +27,7 @@ from ..graders.longextract_grading import _collapse, grade, unwrap
 from .base import Column, Doc
 
 HF_REPO = "DeepRead/longextract-bench-50"
-HF_REVISION: str | None = None  # pinned to a commit once the mirror is uploaded
+HF_REVISION = "49e8894fb9409ed7ba0b6fd97c35cf0d26819839"  # mirror uploaded 2026-10-07
 UPSTREAM = "micro1-inc/longextract-bench-50"
 UPSTREAM_REVISION = "d4ca332f72f6d3649ecd11b69445a8f4ef5fcb02"
 

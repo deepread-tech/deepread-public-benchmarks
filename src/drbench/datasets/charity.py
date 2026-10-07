@@ -29,7 +29,7 @@ from .. import repo_root
 from .base import Column, Doc
 
 HF_REPO = "DeepRead/kleister-charity-dev0"
-HF_REVISION: str | None = None  # pinned to a commit once the dataset is uploaded
+HF_REVISION = "8470213dbdb55bbe3a8dddcd3c298baf8f90299f"  # uploaded 2026-10-07
 
 FIELDS = (
     "address__post_town",
