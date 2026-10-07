@@ -14,6 +14,11 @@ from typing import Any, Callable
 import httpx
 
 TRANSIENT = {408, 409, 425, 429, 500, 502, 503, 504}
+FATAL = {401, 402, 403}  # bad key, no credit, no access: retrying cannot help, stop the whole run
+
+
+class FatalError(RuntimeError):
+    """An error that will hit every document the same way; the runner stops on it."""
 
 
 def env_key(name: str) -> str:
@@ -32,6 +37,8 @@ def request(client: httpx.Client, method: str, url: str, *, attempts: int = 6, *
         except httpx.TransportError as e:
             last = e
         else:
+            if r.status_code in FATAL:
+                raise FatalError(f"HTTP {r.status_code} from {url}: {r.text[:300]}")
             if r.status_code not in TRANSIENT:
                 r.raise_for_status()
                 return r

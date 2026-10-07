@@ -12,6 +12,7 @@ from __future__ import annotations
 import concurrent.futures as cf
 import random
 import sys
+import threading
 import time
 import traceback
 from pathlib import Path
@@ -19,6 +20,7 @@ from pathlib import Path
 from . import envelope
 from .datasets import Dataset, Doc
 from .providers import Provider
+from .providers._http import FatalError
 
 
 def run(
@@ -45,20 +47,30 @@ def run(
     print(f"{dataset.name} × {provider.name}: {len(todo)} to run, {counts['skipped']} already done → {out_dir}")
     if not todo:
         return counts
+    stop = threading.Event()
     with cf.ThreadPoolExecutor(concurrency) as pool:
-        futures = {pool.submit(_one, provider, doc, out_dir / f"{doc.id}.json", retries): doc for doc in todo}
+        futures = {pool.submit(_one, provider, doc, out_dir / f"{doc.id}.json", retries, stop): doc for doc in todo}
         for future in cf.as_completed(futures):
             doc = futures[future]
             status, detail = future.result()
+            if status == "stopped":
+                continue
             counts["ok" if status == "ok" else "failed"] += 1
             print(f"  {doc.id}: {status} {detail}", flush=True)
+    if stop.is_set():
+        left = len(todo) - counts["ok"] - counts["failed"]
+        print(f"stopped: {counts['ok']} ok, {counts['failed']} failed, {left} not attempted — rerun the same "
+              f"command to continue once the account is fixed")
+        return counts
     print(f"done: {counts['ok']} ok, {counts['failed']} failed, {counts['skipped']} skipped")
     return counts
 
 
-def _one(provider: Provider, doc: Doc, out: Path, retries: int) -> tuple[str, str]:
+def _one(provider: Provider, doc: Doc, out: Path, retries: int, stop: threading.Event) -> tuple[str, str]:
     sidecar = out.with_suffix(".job.json")
     time.sleep(random.uniform(0, 2))  # stagger submissions
+    if stop.is_set():
+        return "stopped", ""
     last_error = ""
     started = time.monotonic()
     for attempt in range(1, retries + 1):
@@ -66,6 +78,13 @@ def _one(provider: Provider, doc: Doc, out: Path, retries: int) -> tuple[str, st
             result, usage = provider.extract(doc.pdf, doc.schema, sidecar)
         except SystemExit:
             raise
+        except FatalError as e:
+            # no output is written: the document was never really attempted
+            if not stop.is_set():
+                stop.set()
+                print(f"\nSTOP: {e}\n(the key is rejected or the account has no credit; nothing more is sent)",
+                      file=sys.stderr, flush=True)
+            return "stopped", str(e)
         except TimeoutError as e:
             # the vendor job may still finish; keep the sidecar so the next run polls it
             envelope.write(out, system=provider.name, result=None, latency_s=None, status="failed",
