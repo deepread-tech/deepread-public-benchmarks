@@ -1,0 +1,33 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "deepread-bench"
+version = "0.1.0"
+description = "Reproducible structured-extraction benchmarks: run DeepRead, Reducto and LandingAI on Kleister-Charity, DocILE and LongExtractBench with your own API keys."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "DeepRead", email = "hello@deepread.tech" }]
+keywords = ["benchmark", "document-extraction", "structured-extraction", "json-schema", "ocr", "evaluation"]
+dependencies = [
+    "httpx>=0.27",
+    "huggingface_hub>=0.23",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[project.urls]
+Homepage = "https://github.com/deepread-tech/deepread-public-benchmarks"
+Repository = "https://github.com/deepread-tech/deepread-public-benchmarks"
+
+[project.scripts]
+drbench = "drbench.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/drbench"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

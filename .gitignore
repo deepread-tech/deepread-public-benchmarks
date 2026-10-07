@@ -1,3 +1,15 @@
+# downloaded datasets (never committed: see docs/datasets.md for licences)
+data/
+# in-flight vendor job ids and cached parses
+runs/**/*.job.json
+runs/**/*.markdown.md
+runs/**/*.tmp
 raw_*/
 out_*/
+.venv/
+__pycache__/
 *.pyc
+*.egg-info/
+.pytest_cache/
+.env
+hf/
