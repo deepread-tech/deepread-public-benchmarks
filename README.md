@@ -5,6 +5,22 @@ Schema, and counted how many values each one got right. Everything is here so
 you can run it yourself with your own API keys: the datasets, the schemas, the
 scoring code, the raw outputs, and one command per step.
 
+**The benchmarks are not ours.** They are three public benchmarks made by
+other teams; we only run document AI APIs on them and publish the results.
+All credit for the datasets, the annotations and the metrics goes to their
+authors:
+
+| Benchmark | Made by | Paper / page | Code and data | Licence |
+|---|---|---|---|---|
+| **Kleister-Charity** | Applica.ai — Stanisławek, Graliński, Wróblewska et al. | [Kleister: Key Information Extraction Datasets Involving Long Documents with Complex Layouts](https://arxiv.org/abs/2105.05796), ICDAR 2021 | [github.com/applicaai/kleister-charity](https://github.com/applicaai/kleister-charity) | no licence file; public UK Charity Commission filings |
+| **DocILE** | Rossum — Šimsa, Šulc, Uřičář et al. | [DocILE Benchmark for Document Information Localization and Extraction](https://arxiv.org/abs/2302.05658), ICDAR 2023 | [github.com/rossumai/docile](https://github.com/rossumai/docile), [docile.rossum.ai](https://docile.rossum.ai) | non-commercial research only; download with your own token |
+| **LongExtractBench** | micro1 (commissioned by Reducto) | [micro1.ai/benchmark/long-extraction](https://www.micro1.ai/benchmark/long-extraction) | [github.com/micro1-research/longextract-bench](https://github.com/micro1-research/longextract-bench), [micro1-inc/longextract-bench-50](https://huggingface.co/datasets/micro1-inc/longextract-bench-50) | code MIT, labels CC-BY-4.0 |
+
+What is ours: the harness that runs the APIs, the JSON Schemas we send, the
+label corrections we found, and the results. For LongExtractBench we also use
+micro1's own grader, unmodified. Full citations in
+[docs/datasets.md](docs/datasets.md#credits-and-citations).
+
 > **Status: internal draft.** The numbers below are **placeholders** until the
 > committed runs are in; `drbench report` regenerates them from `runs/`.
 > Do not share outside DeepRead until that is done.

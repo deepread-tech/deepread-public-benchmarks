@@ -1,6 +1,8 @@
 # Datasets
 
-Three public benchmarks, pinned to exact versions. `drbench fetch` downloads
+Three public benchmarks made by other teams, pinned to exact versions. We did
+not create any of them; we run document AI APIs on them. Credits and citations
+are at the [end of this page](#credits-and-citations). `drbench fetch` downloads
 Kleister-Charity and LongExtractBench from DeepRead's Hugging Face datasets
 (copies of the originals, assembled by `scripts/build_hf_datasets.py`, every
 file's origin listed on the dataset card) and DocILE from Rossum with your own
@@ -88,6 +90,50 @@ account is needed.
 Note the sizes: 19,528 pages in total, one document of 11,622 pages. APIs
 with page limits will fail some documents — that is reported as a failure, not
 hidden.
+
+## Credits and citations
+
+**Kleister-Charity** — Applica.ai. Repository:
+<https://github.com/applicaai/kleister-charity>. Paper:
+
+```bibtex
+@inproceedings{stanislawek2021kleister,
+  title     = {Kleister: Key Information Extraction Datasets Involving Long Documents with Complex Layouts},
+  author    = {Stanis{\l}awek, Tomasz and Grali{\'n}ski, Filip and Wr{\'o}blewska, Anna and Lipi{\'n}ski, Dawid and Kaliska, Agnieszka and Rosalska, Paulina and Topolski, Bartosz and Biecek, Przemys{\l}aw},
+  booktitle = {International Conference on Document Analysis and Recognition (ICDAR)},
+  year      = {2021},
+  url       = {https://arxiv.org/abs/2105.05796}
+}
+```
+
+**DocILE** — Rossum, with Czech Technical University, University of La
+Rochelle and the Computer Vision Center. Repository:
+<https://github.com/rossumai/docile>, dataset access: <https://docile.rossum.ai>. Paper:
+
+```bibtex
+@inproceedings{simsa2023docile,
+  title     = {{DocILE} Benchmark for Document Information Localization and Extraction},
+  author    = {{\v{S}}imsa, {\v{S}}t{\v{e}}p{\'a}n and {\v{S}}ulc, Milan and U{\v{r}}i{\v{c}}{\'a}{\v{r}}, Michal and Patel, Yash and Hamdi, Ahmed and Koci{\'a}n, Mat{\v{e}}j and Skalick{\'y}, Maty{\'a}{\v{s}} and Matas, Ji{\v{r}}{\'i} and Doucet, Antoine and Coustaty, Micka{\"e}l and Karatzas, Dimosthenis},
+  booktitle = {International Conference on Document Analysis and Recognition (ICDAR)},
+  year      = {2023},
+  url       = {https://arxiv.org/abs/2302.05658}
+}
+```
+
+**LongExtractBench** — micro1, commissioned by Reducto. Benchmark page:
+<https://www.micro1.ai/benchmark/long-extraction>; code (MIT):
+<https://github.com/micro1-research/longextract-bench>; data (CC-BY-4.0):
+<https://huggingface.co/datasets/micro1-inc/longextract-bench-50>. Citation as
+given on the dataset card:
+
+```bibtex
+@misc{longextractbench2026,
+  title  = {LongExtractBench: Structured Extraction on Long, Table-Heavy Documents},
+  author = {micro1},
+  year   = {2026},
+  url    = {https://github.com/micro1-research/longextract-bench}
+}
+```
 
 ## What each system receives
 
