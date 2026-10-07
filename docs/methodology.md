@@ -6,6 +6,24 @@ same deterministic code against the same answer key. Nothing is tuned per
 vendor; the only vendor-specific code is the adapter that moves the PDF and
 schema into each API's request shape (see [providers.md](providers.md)).
 
+## 0. The headline number: accuracy
+
+The README shows one number per system and benchmark: **accuracy, the share
+of answer-key values the system got right**, over every document in the
+benchmark. A document the system failed to process counts as all wrong.
+
+- Kleister-Charity and DocILE: correct values ÷ all values in the answer key,
+  pooled over all documents (in the benchmarks' terms, the recall of their
+  official metric).
+- LongExtractBench: per document, correct values ÷ all answer-key values
+  (cells of every answer-key row, including rows the system missed, plus the
+  document-level fields), averaged over the 50 documents.
+
+`drbench grade` also reports each benchmark's own metrics — F1, precision and
+recall for Kleister-Charity and DocILE, micro1's row precision, row recall and
+leaf accuracy for LongExtractBench — in `runs/<dataset>/scores.json`, defined
+in §3 below.
+
 ## 1. The unit of evaluation
 
 A document is one PDF with a JSON Schema and a ground truth. A run is one

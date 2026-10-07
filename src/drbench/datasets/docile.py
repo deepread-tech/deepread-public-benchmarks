@@ -125,11 +125,8 @@ class Docile:
     name = "docile"
     title = "DocILE (validation, 500 documents)"
     columns = (
-        Column("completed", "Completed", "int"),
-        Column("f1", "Field F1"),
-        Column("precision", "Precision"),
-        Column("recall", "Recall"),
-        Column("latency_p50", "Median latency", "seconds"),
+        Column("accuracy", "Accuracy"),
+        Column("completed", "Documents completed", "int"),
     )
 
     # -- data ---------------------------------------------------------------------
@@ -237,7 +234,9 @@ class Docile:
         tp = sum(d["tp"] for d in per_doc)
         fp = sum(d["fp"] for d in per_doc)
         fn = sum(d["fn"] for d in per_doc)
-        out = {"documents": len(per_doc), **_prf(tp, fp, fn), "fields": {}}
+        prf = _prf(tp, fp, fn)
+        # the headline: answer-key values the system got right, over all 500 documents
+        out = {"documents": len(per_doc), "accuracy": prf["recall"], **prf, "fields": {}}
         for field in sorted({f for d in per_doc for f in d["fields"]}):
             counts = [d["fields"].get(field, {"tp": 0, "fp": 0, "fn": 0}) for d in per_doc]
             out["fields"][field] = _prf(
