@@ -1,137 +1,161 @@
 {
   "type": "object",
   "properties": {
-    "document_id": {
+    "account_num": {
       "type": "string",
-      "description": "Return the printed identifier value, not a document-type heading such as “Sales Order.” Prefer an explicit Invoice No./Invoice #. Otherwise use a specific Contract #, especially Contract # for invoicing; this takes precedence over a separate generic Order #. If no invoice or specific contract number is given, use an explicitly labeled Account Number rather than an ambiguous “Contract or P.O. No.” reference. Otherwise use a labeled Order #, Sales Order number, or P.O. number (including a sample order number). Return only the value, preserving its printed letters, digits, and punctuation. Do not use dates, party identifiers, totals, project numbers, or unrelated unlabeled numbers."
-    },
-    "date_issue": {
-      "type": "string",
-      "description": "Extract the date that identifies when this document was issued, created, or formally confirmed. Use explicit issue, invoice, or document dates; for contract confirmations use the Order Date, and for contract revisions use the revision date. A prominent date on an invoice may qualify even without an issue-date label. Use a Printed, Received, Sent, or Changes-as-of date only when it clearly dates this document itself. Do not use due dates, service/run or validity dates, billing periods, payment transaction times, start/end dates, or dates entered/modified. On a document headed Sales Order, do not treat its generic Date as the issue date. If no applicable document date is printed, or the date is incomplete or invalid, return empty. Preserve the full printed date; do not truncate it."
-    },
-    "date_due": {
-      "type": "string",
-      "description": "Return an explicitly labeled Payment Due date or equivalent when present. Use an unlabeled or differently labeled date only for these exceptions: on a formal broadcast billing invoice clearly titled “Official Billing Invoice,” use its Invoice Date if no due date is shown; on a talent/production invoice, use the Expiration Date associated with the Commercial or product entry; on a receipt confirming a completed payment or sale (for example, thanking the customer for payment), use its transaction date if no due date is shown. Do not apply the receipt exception to authorization, capture, or status records that do not confirm completion. Otherwise return empty: an ordinary Invoice Date, generic Date, print or letterhead date, revised date, or order/service-period date is not a due date. Do not calculate a date from payment terms. Return the date as printed, without a time."
-    },
-    "order_id": {
-      "type": "string",
-      "description": "Extract the customer’s operative order or engagement reference, not simply the first or most prominent identifier. Prefer an explicit Order No./Order ID/Order# or customer PO# wherever it appears, including on an attached order or schedule. Use a Contract No./Contract# only when it is the operative reference for the billed work and no more direct customer order/PO is shown; exclude vendor/internal booking numbers and numbers marked for invoicing. A clearly separable customer-specific reference embedded in a contract name may be used, but never return the descriptive name itself. Do not substitute project, study, campaign, product, client, or advertiser names. Preserve the complete identifier. Return a printed placeholder such as TBD only when it occupies an applicable order/contract-number field; otherwise return null if no applicable reference is present."
-    },
-    "customer_order_id": {
-      "type": "string",
-      "description": "Extract the customer's own order reference, not an identifier assigned by the document issuer. Use values explicitly labeled as the customer's PO/P.O. number, customer order, PO/Estimate, Agency Order, Buyer Order, or MFS Order; also accept a value under a combined Contract/Grant/Agreement/Purchase Order label when it clearly identifies the customer's reference. Preserve printed wording, including a “CONTRACT #” prefix when it is part of the labeled PO value. In advertising or media documents, do not use generic Order #, Traffic Order #, Contract #, Est #, AGY EST, Estimate/HL, or numbers embedded in product or contract descriptions. Leave empty if no qualifying customer reference is printed. Extract only the identifier associated with its qualifying label, not neighboring codes."
-    },
-    "vendor_name": {
-      "type": "string",
-      "description": "The name of the issuing vendor/supplier company."
-    },
-    "vendor_address": {
-      "type": "string",
-      "description": "The address of the issuing vendor/supplier."
-    },
-    "vendor_tax_id": {
-      "type": "string",
-      "description": "The vendor's VAT/tax identification number."
-    },
-    "vendor_email": {
-      "type": "string",
-      "description": "The vendor's contact email address."
-    },
-    "customer_billing_name": {
-      "type": "string",
-      "description": "Extract the customer billed or addressed by the document, not automatically the advertiser, sponsor, vendor, or contact. On receipts, use “Customer Name,” not “Cardholder Name.” On invoices, prefer an explicit Bill To, Client, or named invoice addressee. In advertising tables with separate “AGY” and “ADV” fields, use the AGY value; when a separate “ADVERTISER” appears beside a full “AGENCY” field and agency-client or contract-for-invoicing routing details, use the advertiser. If an account/contract sheet lists an advertiser as the account or sponsor and separately names an agency, use the agency when it is identified as the billed agency. Do not use a salesperson, representative, or unrelated contact."
-    },
-    "customer_billing_address": {
-      "type": "string",
-      "description": "Extract the complete printed address block for the customer’s billing party, preserving wording, spelling, and line order; do not substitute a contact found elsewhere. Prefer explicit Bill To, Sold To, or equivalent billing labels. On advertising or broadcast forms, use the Agency/Address area and continuation lines only when they identify the party to be billed; distinguish it from an AOR, salesperson, advertiser, sponsor, account name, or agency name elsewhere. Include text in a dedicated billing address field even if it is not a conventional postal address. Otherwise use an unambiguously customer-linked address block. Exclude vendor and ship-to/delivery blocks. Return empty when there is no applicable billing address block, including when only a billing-party name, account/contact, or unrelated address is printed."
-    },
-    "customer_delivery_name": {
-      "type": "string",
-      "description": "The name at the delivery/ship-to location, if printed."
-    },
-    "customer_delivery_address": {
-      "type": "string",
-      "description": "The delivery/ship-to address, if printed."
-    },
-    "customer_id": {
-      "type": "string",
-      "description": "The customer identification number assigned by the vendor."
-    },
-    "customer_other_name": {
-      "type": "string",
-      "description": "Extract a customer-side person or organization only when the document identifies it as a purchasing, billing, or customer account party. Prefer explicit Buyer Name, Cardholder Name, or Bill To roles; in advertising orders or invoices, use the named customer-side Rep, Agency, or account name when the header identifies it as the party for the transaction. When an advertiser or campaign competes with such a party, choose the customer-side party, not the advertiser, sponsor, ADV, product, or campaign. A bare Client, Sponsor, Advertiser, or Agency label is not enough, nor is a name appearing only in a project description, ordinary addressee block, contact field, or shipping/requested-by role. Do not infer a customer from non-advertising project or service descriptions. Return only the printed qualifying name, or null if none is shown."
-    },
-    "customer_other_address": {
-      "type": "string",
-      "description": "Another customer/partner address printed on the document (not billing)."
-    },
-    "customer_registration_id": {
-      "type": "string",
-      "description": "The customer's registration/company identification number."
-    },
-    "vendor_registration_id": {
-      "type": "string",
-      "description": "The vendor's registration/company identification number."
-    },
-    "vendor_order_id": {
-      "type": "string",
-      "description": "Extract the vendor’s own identifier for the job, project, proposal, or work order when the document explicitly presents one as the vendor’s reference (for example, a vendor-labeled Job #, Proposal Number, or W/O #). Return only that identifier, not a customer, agency, buyer, or client PO/order number. Leave empty if no vendor-assigned job/project/proposal/work-order reference is printed. In particular, do not use invoice or bill numbers, account or contract numbers, advertising/station order numbers, or generic order numbers merely because they appear on a sales order, confirmation, or invoice. Labels and context must indicate the identifier belongs to the vendor, not another party."
-    },
-    "currency_code_amount_due": {
-      "type": "string",
-      "description": "Return the currency code for an amount currently payable. Fill this field only when the document shows an amount due, balance due, total payable, or a clearly equivalent payable amount; otherwise return empty, even if a currency is mentioned elsewhere. Use a code or unambiguous currency symbol printed with that amount, or a document-wide currency designation that clearly applies to it. Do not use currencies associated only with a party, order, price, subtotal, tax, amount already paid, or another section, and do not infer from country or language. If an amount is due but its currency is not stated or unambiguously indicated, return empty."
+      "description": "Bank account number"
     },
     "amount_due": {
       "type": "string",
-      "description": "Extract the final amount due, exactly as printed, including any currency symbol or code. Prefer an explicitly labeled balance/amount/net due, net amount, or station net: this is the payable amount after fees, commissions, or other deductions. Do not choose a gross amount, gross total, or pre-deduction subtotal when a corresponding net amount is printed. If no net or due amount is given, use the document’s overall invoice total or clearly labeled TOTAL—not a line item, subtotal, tax amount, or amount already paid. Ignore totals for other parties or transactions and values from prior periods or columns."
-    },
-    "amount_total_gross": {
-      "type": "string",
-      "description": "The gross total amount (including tax), exactly as printed."
-    },
-    "amount_total_net": {
-      "type": "string",
-      "description": "The net total amount (before tax), exactly as printed."
-    },
-    "amount_total_tax": {
-      "type": "string",
-      "description": "The total tax amount, exactly as printed."
+      "description": "Total amount to be payed"
     },
     "amount_paid": {
       "type": "string",
-      "description": "Extract only an amount explicitly denoting money paid, received, or applied as payment. Qualifying labels include Amount Paid, Cash Received, Advance PMT, and a clearly payment-specific Payments/Adjustments entry; include an explicitly labeled zero payment and an explicitly labeled payment-processing fee. In PayPal transaction details, select the PayPal Fee amount, not Gross Amount or the transaction-status amount. For reimbursement or cash-received statements, use the Grand Total amount aligned with “OK to pay” or the payment column, not cumulative expenses or an adjacent total. Treat a positive Advance PMT on an invoice as a negative payment credit; otherwise preserve minus signs and remove parentheses from parenthesized invoice-payment amounts. Do not treat invoice/order totals, amounts due, charges, expenses, subtotals, balances, credits, or a generic card “Total Amount”/approval as payment. Otherwise return null."
+      "description": "Total amount already paid"
     },
-    "payment_terms": {
+    "amount_total_gross": {
       "type": "string",
-      "description": "The payment terms printed on the document (e.g. 'Net 30 days')."
+      "description": "Total amount with tax"
     },
-    "payment_reference": {
+    "amount_total_net": {
       "type": "string",
-      "description": "Extract a payment reference or remittance identifier only when the document clearly identifies a value for payment tracking—for example, with a label such as “Payment Reference,” “Remittance Reference,” or “Transaction ID,” or explicitly says a number is to be used when remitting payment. In compact invoice headers, include a number explicitly designated for customer payment/remittance, even if it also appears in an invoice-number column. Do not use ordinary invoice, order, customer, account, department, authorization, check, or case numbers; payment-note text; or numbers merely near payment instructions. If no value is clearly assigned a payment-reference role, return empty."
+      "description": "Total amount without tax"
+    },
+    "amount_total_tax": {
+      "type": "string",
+      "description": "Total sum of tax amounts"
     },
     "bank_num": {
       "type": "string",
-      "description": "Extract the bank routing number used for payment, not the bank account number. Prefer the number explicitly labeled “ABA,” “ABA #,” “routing,” or “routing number,” typically printed with the bank’s name or payment instructions. Do not return a value labeled “ACCT. NO.,” “account number,” or a department/account code belonging to the payer or invoice. If both routing and account numbers are shown, return only the routing number."
+      "description": "Bank number"
     },
-    "account_num": {
+    "bic": {
       "type": "string",
-      "description": "Extract an account number used to make or receive payment, such as a bank account number shown in payment, remittance, or banking details. Do not extract a vendor-assigned customer, advertiser, project, contract, or invoice account/reference number, even when labeled Account, Acct #, or Account Number. Also exclude credit/debit card numbers, transaction IDs, invoice/order numbers, and other identifiers. Return empty if the document has no actual payment-account number. Preserve the complete printed account number, including leading zeros or separators."
+      "description": "Bank Identifier Code (SWIFT)"
     },
-    "tax_detail_net": {
+    "currency_code_amount_due": {
       "type": "string",
-      "description": "Extract the pre-tax amount only when the document shows an actual billed transaction or charge category: use an explicit Net/Net Amount, or the Gross Amount when it is paired with separately stated sales tax. For a genuine transaction receipt that labels a transaction Gross Amount but has no tax breakdown, use that amount; for an actual spot-billing schedule with Gross and Net, use Net. Return empty when the only amounts are invoice totals or balances (including Net Due/Total Due), commissions or settlement amounts, reimbursements, project-payment schedules, booking/order or cash totals, card authorization/payment totals, or projected billing summaries rather than actual billed charges. Do not treat labels such as “net” or a sole amount as sufficient by themselves."
+      "description": "Currency code or symbol found near the amount due"
     },
-    "tax_detail_tax": {
+    "customer_billing_address": {
       "type": "string",
-      "description": "The tax amount broken out per tax detail line, exactly as printed."
+      "description": "Address of the company that is being invoiced"
+    },
+    "customer_billing_name": {
+      "type": "string",
+      "description": "Name of the company that is being invoiced"
+    },
+    "customer_delivery_address": {
+      "type": "string",
+      "description": "Address of the company for delivery of goods/services"
+    },
+    "customer_delivery_name": {
+      "type": "string",
+      "description": "Name of the company for delivery of goods/services"
+    },
+    "customer_id": {
+      "type": "string",
+      "description": "Customer account number"
+    },
+    "customer_order_id": {
+      "type": "string",
+      "description": "Any customer order reference"
+    },
+    "customer_other_address": {
+      "type": "string",
+      "description": "Any other name and address of the purchasing company"
+    },
+    "customer_other_name": {
+      "type": "string",
+      "description": "Any other name of the purchasing company"
+    },
+    "customer_registration_id": {
+      "type": "string",
+      "description": "Purchaser registration identifier number"
+    },
+    "customer_tax_id": {
+      "type": "string",
+      "description": "Purchaser tax identification number"
+    },
+    "date_due": {
+      "type": "string",
+      "description": "Due date for payment"
+    },
+    "date_issue": {
+      "type": "string",
+      "description": "Date the document was issued"
+    },
+    "document_id": {
+      "type": "string",
+      "description": "Main document number"
+    },
+    "iban": {
+      "type": "string",
+      "description": "International Bank Account Number"
+    },
+    "order_id": {
+      "type": "string",
+      "description": "Any order number"
+    },
+    "payment_reference": {
+      "type": "string",
+      "description": "Payment reference number"
+    },
+    "payment_terms": {
+      "type": "string",
+      "description": "Conditions for the payment time window"
     },
     "tax_detail_gross": {
-      "type": "string",
-      "description": "Extract a charge only from an advertising/media invoice or an order-level advertising/broadcast billing document with a clear transaction amount. For an invoice, use the final NET TOTAL, Net Due, or amount payable, including tax when shown; do not use a pre-tax gross line when the final total is available. An Amount Paid qualifies only when it clearly pays that invoice’s charge. For an order-level spot schedule, use Gross or Station Gross Totals, not Station Net; apply the same rule to a spot-level Billing Projection, but not a monthly projected rollup. An explicit total for a defined advertising flight/order or an extended transaction line on an advertising invoice qualifies; ignore header-only market/order amounts, subtotals when a final total is shown, and prior-period values. Leave empty for performance-only affidavits/summaries, payment or installment records, expense/reimbursement invoices, generic non-advertising purchases, donations, proposals without a billed charge, and project-progress claims. Return applicable amounts in document order separated by |; otherwise return null."
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Tax breakdown line amount with tax (one entry per tax breakdown line)"
+    },
+    "tax_detail_net": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Tax breakdown line amount without tax (one entry per tax breakdown line)"
     },
     "tax_detail_rate": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Tax breakdown line tax rate (one entry per tax breakdown line)"
+    },
+    "tax_detail_tax": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Tax breakdown line tax amount (one entry per tax breakdown line)"
+    },
+    "vendor_address": {
       "type": "string",
-      "description": "The tax rate percentage per tax detail line, exactly as printed."
+      "description": "Address of the supplier company"
+    },
+    "vendor_email": {
+      "type": "string",
+      "description": "Any supplier e-mail address"
+    },
+    "vendor_name": {
+      "type": "string",
+      "description": "Name of the supplier company"
+    },
+    "vendor_order_id": {
+      "type": "string",
+      "description": "Any vendor order reference"
+    },
+    "vendor_registration_id": {
+      "type": "string",
+      "description": "Supplier registration identification number"
+    },
+    "vendor_tax_id": {
+      "type": "string",
+      "description": "Supplier tax identification number"
     }
   }
 }

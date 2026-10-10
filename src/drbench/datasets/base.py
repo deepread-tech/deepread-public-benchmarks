@@ -13,17 +13,10 @@ class Doc:
     ground_truth: Any  # dataset-specific; only that dataset's grader reads it
 
 
-@dataclass(frozen=True)
-class Column:
-    key: str  # key in the aggregate dict
-    label: str  # table header
-    kind: str = "pct"  # pct | int | seconds
-
-
 class Dataset(Protocol):
-    name: str
-    title: str
-    columns: tuple[Column, ...]  # what the leaderboard shows, in order
+    name: str  # used on the command line and as the run directory name
+    title: str  # heading of the dataset's results table
+    short: str  # column header in the summary table
 
     def fetch(self, data_dir: Path, **opts: Any) -> None: ...
 
@@ -31,4 +24,5 @@ class Dataset(Protocol):
 
     def grade(self, pred: dict, ground_truth: Any, schema: dict) -> dict: ...
 
-    def aggregate(self, per_doc: list[dict]) -> dict: ...
+    def aggregate(self, per_doc: list[dict]) -> dict:
+        """Per-document grades → the dataset's metrics; `score` is the headline (0..1)."""

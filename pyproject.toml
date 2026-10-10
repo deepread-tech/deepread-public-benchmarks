@@ -13,6 +13,7 @@ authors = [{ name = "DeepRead", email = "hello@deepread.tech" }]
 keywords = ["benchmark", "document-extraction", "structured-extraction", "json-schema", "ocr", "evaluation"]
 dependencies = [
     "httpx>=0.27",
+    "pypdf>=4",
     "huggingface_hub>=0.23",
 ]
 

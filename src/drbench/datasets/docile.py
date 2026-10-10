@@ -8,13 +8,12 @@ annotated train+val archive with your token and keeps the 500 validation
 documents; the ground truth is built from the official annotations on your
 machine. `datasets/docile/val_docids.txt` pins the document list.
 
-Metric: value-level per-field F1. Every (document, field, value) in the official
+Metric (the headline score): value-level F1. Every (document, field, value) in the official
 KILE annotations is one item; a system's values for that field are matched
 after light normalisation (whitespace and case, numeric amounts, dates to ISO,
 currency symbols to ISO codes). This is the text half of DocILE's KILE metric;
 the official scorer also requires the field's location on the page, which not
-every API returns. For DeepRead, the location-aware official score is in
-official/docile.
+every API returns, so it cannot compare all systems.
 """
 
 from __future__ import annotations
@@ -31,7 +30,7 @@ from typing import Any
 import httpx
 
 from .. import repo_root
-from .base import Column, Doc
+from .base import Doc
 
 ARCHIVE_URL = "https://docile-dataset-rossum.s3.eu-west-1.amazonaws.com/{token}/annotated-trainval.zip"
 SYMBOL_TO_CODE = {"$": "USD", "US$": "USD", "USD": "USD", "€": "EUR", "EUR": "EUR", "£": "GBP", "GBP": "GBP"}
@@ -124,10 +123,7 @@ def values(field: str, value: Any) -> list[str]:
 class Docile:
     name = "docile"
     title = "DocILE (validation, 500 documents)"
-    columns = (
-        Column("accuracy", "Accuracy"),
-        Column("completed", "Documents completed", "int"),
-    )
+    short = "DocILE"
 
     # -- data ---------------------------------------------------------------------
 
@@ -235,8 +231,8 @@ class Docile:
         fp = sum(d["fp"] for d in per_doc)
         fn = sum(d["fn"] for d in per_doc)
         prf = _prf(tp, fp, fn)
-        # the headline: answer-key values the system got right, over all 500 documents
-        out = {"documents": len(per_doc), "accuracy": prf["recall"], **prf, "fields": {}}
+        # the headline: F1 over every (field, value) of all 500 documents
+        out = {"documents": len(per_doc), "score": prf["f1"], **prf, "fields": {}}
         for field in sorted({f for d in per_doc for f in d["fields"]}):
             counts = [d["fields"].get(field, {"tp": 0, "fp": 0, "fn": 0}) for d in per_doc]
             out["fields"][field] = _prf(

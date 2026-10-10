@@ -17,14 +17,18 @@ TRANSIENT = {408, 409, 425, 429, 500, 502, 503, 504}
 FATAL = {401, 402, 403}  # bad key, no credit, no access: retrying cannot help, stop the whole run
 
 
-class FatalError(RuntimeError):
+class FatalError(Exception):
     """An error that will hit every document the same way; the runner stops on it."""
+
+
+class TransientError(RuntimeError):
+    """The service kept answering with a retryable error (or not at all)."""
 
 
 def env_key(name: str) -> str:
     value = os.environ.get(name)
     if not value:
-        sys.exit(f"{name} is not set (see docs/providers.md)")
+        sys.exit(f"{name} is not set (see docs/systems.md)")
     return value
 
 
@@ -48,16 +52,20 @@ def request(client: httpx.Client, method: str, url: str, *, attempts: int = 6, *
                 time.sleep(min(120, int(retry_after)))
                 continue
         time.sleep(min(60, 5 * 2**attempt))
-    raise RuntimeError(f"{method} {url} failed after {attempts} attempts: {last}")
+    raise TransientError(f"{method} {url} failed after {attempts} attempts: {last}")
 
 
 def poll(fetch: Callable[[], dict], done: Callable[[dict], bool], interval: float, timeout: float) -> dict:
-    """Call `fetch` until `done(body)`; transient errors only delay the next poll."""
+    """Call `fetch` until `done(body)`.
+
+    Transient errors only delay the next poll. Anything else (a rejected key, a
+    job that no longer exists) is raised at once instead of waiting out `timeout`.
+    """
     deadline = time.monotonic() + timeout
     while True:
         try:
             body = fetch()
-        except (httpx.TransportError, httpx.HTTPStatusError, RuntimeError) as e:
+        except (httpx.TransportError, TransientError) as e:
             if time.monotonic() > deadline:
                 raise
             print(f"  poll error, retrying: {str(e)[:120]}", file=sys.stderr)
