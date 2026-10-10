@@ -1,9 +1,11 @@
-"""drbench — run public structured-extraction benchmarks against document AI APIs.
+"""drbench — run commercial document extraction APIs on public benchmarks, with
+each vendor's default settings and list prices, and score them the same way.
 
-    drbench fetch <dataset>                    download a dataset (your own token where needed)
-    drbench run --dataset D --system S         call one API on every document (paid)
-    drbench grade --dataset D                  score the saved outputs (offline)
-    drbench report                             leaderboard tables from the scores (offline)
+    drbench systems                              what is run: vendor, product, settings, price
+    drbench fetch DATASET                        download a benchmark
+    drbench run DATASET SYSTEM [SYSTEM ...]      call the APIs on every document (paid)
+    drbench grade DATASET                        score the saved outputs (offline)
+    drbench report [--readme README.md]          results tables (offline)
 """
 
 from __future__ import annotations

@@ -1,6 +1,6 @@
 """The Kleister-Charity scorer must reproduce GEval 1.14.2.0.
 
-`official/kleister_charity/results/run478/out.tsv` is a real DeepRead run that
+`tests/fixtures/kleister_geval_run478/out.tsv` is a real DeepRead run that
 was scored with the official GEval binary (see `geval_*_labels.txt` next to it).
 The same predictions scored here must give the same numbers.
 """
@@ -13,7 +13,7 @@ import pytest
 from drbench.datasets.charity import Charity, grade_labels, iso_date, money, to_labels
 
 ROOT = Path(__file__).resolve().parents[1]
-PREDICTIONS = ROOT / "official" / "kleister_charity" / "results" / "run478" / "out.tsv"
+PREDICTIONS = ROOT / "tests" / "fixtures" / "kleister_geval_run478" / "out.tsv"
 CORRECTED = ROOT / "datasets" / "charity" / "errata" / "dev-0.expected.corrected.tsv"
 OFFICIAL_CANDIDATES = (
     Path(os.environ.get("KLEISTER_EXPECTED", "")),
@@ -48,7 +48,7 @@ def test_reproduces_geval_on_corrected_labels():
     assert _close(s["f1"], 76.5)
     assert _close(s["mean_f1_uc"], 84.2)
     assert _close(s["accuracy_uc"], 22.7, ACC_TOL)
-    assert s["accuracy"] == s["recall_uc"]  # the headline is "answer-key values got right"
+    assert s["score"] == s["f1_uc"]  # the headline is the benchmark's own F1 (UC)
     geval_fields = {
         "address__post_town": 92.9, "address__postcode": 91.8, "address__street_line": 41.3,
         "charity_name": 66.3, "charity_number": 98.85, "report_date": 98.0,

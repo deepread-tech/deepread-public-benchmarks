@@ -9,7 +9,7 @@ assembled from the original repository and Applica's public S3 bucket.
 `test-A` labels were never released and the scoring server (gonito.net) is
 offline, so dev-0 is the largest split anyone can score.
 
-Metric: the benchmark's own one, MultiLabel-F1 over upper-cased `field=value`
+Metric (the headline score): the benchmark's own, MultiLabel-F1 over upper-cased `field=value`
 labels ("F1 (UC)" in the Kleister `config.txt`), computed over all 440 documents
 (a document the system failed contributes only misses). Values are normalised
 the way the Kleister README prescribes before comparison: spaces as `_`, dates
@@ -26,7 +26,7 @@ from pathlib import Path
 from typing import Any
 
 from .. import repo_root
-from .base import Column, Doc
+from .base import Doc
 
 HF_REPO = "DeepRead/kleister-charity-dev0"
 HF_REVISION = "8470213dbdb55bbe3a8dddcd3c298baf8f90299f"  # uploaded 2026-10-07
@@ -150,10 +150,7 @@ def _prf(tp: int, fp: int, fn: int) -> dict:
 class Charity:
     name = "charity"
     title = "Kleister-Charity (dev-0, 440 documents)"
-    columns = (
-        Column("accuracy", "Accuracy"),
-        Column("completed", "Documents completed", "int"),
-    )
+    short = "Kleister-Charity"
 
     # -- data ---------------------------------------------------------------------
 
@@ -201,8 +198,9 @@ class Charity:
         uc = _prf(tp_uc, fp_uc, fn_uc)
         out = {
             "documents": len(per_doc),
-            # the headline: answer-key values the system got right, over all 440 documents
-            "accuracy": uc["recall"],
+            "score": uc["f1"],  # the headline: F1 (UC), the benchmark's own metric, over all 440 documents
+            "precision": uc["precision"],
+            "recall": uc["recall"],
             "f1_uc": uc["f1"],
             "precision_uc": uc["precision"],
             "recall_uc": uc["recall"],

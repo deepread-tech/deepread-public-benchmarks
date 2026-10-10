@@ -13,7 +13,7 @@ our label errata.
 | Dataset | Split | Documents | Pages | Fields | Download | Original / pin | Licence |
 |---|---|---|---|---|---|---|---|
 | Kleister-Charity | dev-0 | 440 | multi-page annual reports | 8 scalars | [DeepRead/kleister-charity-dev0](https://huggingface.co/datasets/DeepRead/kleister-charity-dev0) | [applicaai/kleister-charity](https://github.com/applicaai/kleister-charity) @ `2309f486` | no licence file; public UK Charity Commission filings |
-| DocILE | validation | 500 | 1–3 page business documents | 33 KILE field types | your own token ([access form](https://docile.rossum.ai)) | [rossumai/docile](https://github.com/rossumai/docile), dataset v1.0 | non-commercial research only, no redistribution |
+| DocILE | validation | 500 | 1–3 page business documents | 36 KILE field types | your own token ([access form](https://docile.rossum.ai)) | [rossumai/docile](https://github.com/rossumai/docile), dataset v1.0 | non-commercial research only, no redistribution |
 | LongExtractBench (public subset) | the 50 public documents | 50 | 22–11,622 pages, median 86 | per-document schema, large row arrays | [DeepRead/longextract-bench-50](https://huggingface.co/datasets/DeepRead/longextract-bench-50) (mirror) | [micro1-inc/longextract-bench-50](https://huggingface.co/datasets/micro1-inc/longextract-bench-50) @ `d4ca332f` | labels CC-BY-4.0; PDFs keep their original rights |
 
 ## Kleister-Charity
@@ -33,8 +33,8 @@ pinned commit: labels and document list from a blob-less clone, PDFs from
 Applica's public S3 bucket, where they are git-annex objects whose key is the
 target of each `documents/<name>` symlink. Nothing was altered.
 
-Schema: `datasets/charity/schema.json` — the eight fields with a one-sentence
-description each. Errata: `datasets/charity/errata/label_fixes.csv` (336
+Schema: `datasets/charity/schema.json` — the eight fields, described in the
+Kleister README's own words. Errata: `datasets/charity/errata/label_fixes.csv` (336
 changes across 190 documents; the most common is the auditor's address
 labelled as the charity's) and `dev-0.expected.corrected.tsv`, the full
 corrected label file in the official format.
@@ -43,7 +43,7 @@ corrected label file in the official format.
 
 Invoice-like business documents from the UCSF Industry Documents Library and
 public procurement, annotated by Rossum for the DocILE 2023 benchmark. The KILE
-task has 33 field types (document and order ids, dates, vendor and customer
+task has 36 field types (document and order ids, dates, vendor and customer
 names and addresses, amounts, tax details, bank details...). The validation
 split is 500 documents; the test split is scored only on the organisers'
 server.
@@ -64,8 +64,8 @@ The dataset terms allow **non-commercial research use only** and forbid
 redistribution. Comply with them: do not commit DocILE documents, OCR or
 labels, and do not publish per-document values.
 
-Schema: `datasets/docile/schema.json` — the 33 KILE field types with field
-descriptions. Errata: `datasets/docile/errata/label_fixes.csv` (200 changes
+Schema: `datasets/docile/schema.json` — the 36 KILE field types, described
+in the words of Table 1 of the DocILE paper. Errata: `datasets/docile/errata/label_fixes.csv` (200 changes
 across 144 documents, e.g. a letter O labelled where the document prints a
 zero).
 
@@ -137,8 +137,8 @@ given on the dataset card:
 
 ## What each system receives
 
-For every dataset the same `schema.json` goes to every system unchanged
-(DeepRead reads `description` as the field instruction, as do Reducto and
-LandingAI). The schemas for Kleister-Charity and DocILE were written by
-DeepRead against each benchmark's **training** split; no evaluation document
-was used.
+For every dataset the same `schema.json` goes to every system unchanged.
+LongExtractBench's schemas are micro1's. The Kleister-Charity and DocILE
+schemas list each benchmark's fields with the benchmark authors' own
+definitions (the Kleister README; Table 1 of the DocILE paper), so no system,
+DeepRead included, gets instructions written for it.
