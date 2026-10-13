@@ -28,6 +28,8 @@ def test_envelope_roundtrip_and_classification(tmp_path):
 def test_system_names():
     assert make("deepread").name == "deepread-deep-extract"
     assert make("deepread:extract").name == "deepread-extract"
+    assert make("deepread:extract-selfhost").pipeline == "extract-selfhost"
+    assert make("deepread:deep-extract-selfhost").name == "deepread-deep-extract-selfhost"
     assert make("reducto").name == "reducto-deep-extract"
     assert make("reducto:extract").name == "reducto-extract"
     assert make("landingai").name == "landingai-dpt-3-pro"

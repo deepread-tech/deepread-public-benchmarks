@@ -105,7 +105,8 @@ drbench grade --dataset charity
 drbench report
 ```
 
-Systems: `deepread:extract`, `deepread:deep-extract`, `reducto:extract`,
+Systems: `deepread:extract`, `deepread:deep-extract` (and their
+`-selfhost` variants on DeepRead's self-hosted OCR engine), `reducto:extract`,
 `reducto:deep-extract`, `landingai:dpt-3-pro`, `extend:performance`,
 `extend:operator`. `drbench grade` on our committed `runs/` reproduces the
 table above without any key.

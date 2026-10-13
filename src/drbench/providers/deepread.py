@@ -6,7 +6,9 @@ Sign up at https://app.deepread.tech, create an API key, then
 Call: `POST /v1/process` (multipart: `file`, `pipeline`, `schema`) returns a job;
 `GET /v1/jobs/{id}` is polled until it completes. The benchmark's JSON Schema is
 sent as-is; field `description`s are the only instructions the system gets.
-Modes: `extract` (the default production pipeline) and `deep-extract`.
+Modes: `extract` and `deep-extract` (the production pipelines), and
+`extract-selfhost` / `deep-extract-selfhost` (the same pipelines on DeepRead's
+self-hosted OCR engine).
 """
 
 from __future__ import annotations
@@ -21,7 +23,7 @@ import httpx
 from ._http import Sidecar, env_key, poll, request, unwrap_values
 
 DEFAULT_URL = "https://api.deepread.tech"
-PIPELINES = ("extract", "deep-extract")
+PIPELINES = ("extract", "deep-extract", "extract-selfhost", "deep-extract-selfhost")
 _DONE = {"completed", "failed", "cancelled", "error"}
 _WRAPPER_MARKERS = ("hil_flag", "needs_review", "human_review", "reason", "found_on_page")
 

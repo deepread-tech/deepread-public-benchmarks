@@ -15,6 +15,8 @@ each key is used only for that vendor's calls.
 |---|---|---|---|---|
 | `deepread:extract` | [DeepRead](https://deepread.tech) | `extract` pipeline | `DEEPREAD_API_KEY` | `POST /v1/process` → poll `GET /v1/jobs/{id}` |
 | `deepread:deep-extract` (default) | DeepRead | `deep-extract` pipeline | `DEEPREAD_API_KEY` | same |
+| `deepread:extract-selfhost` | DeepRead | `extract` on DeepRead's self-hosted OCR engine | `DEEPREAD_API_KEY` | same |
+| `deepread:deep-extract-selfhost` | DeepRead | `deep-extract` on the self-hosted OCR engine | `DEEPREAD_API_KEY` | same |
 | `reducto:deep-extract` (default) | [Reducto](https://reducto.ai) | Deep Extract (`settings.deep_extract = true`) | `REDUCTO_API_KEY` | `POST /upload` → `POST /extract_async` → poll `GET /job/{id}` |
 | `reducto:extract` | Reducto | standard Extract | `REDUCTO_API_KEY` | same |
 | `landingai:dpt-3-pro` (default) | [LandingAI ADE](https://landing.ai) | DPT-3 Pro parse + Extract | `VISION_AGENT_API_KEY` | `POST /v2/parse/jobs` → poll → `POST /v2/extract/jobs` → poll |
