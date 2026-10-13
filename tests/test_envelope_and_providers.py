@@ -8,7 +8,7 @@ from drbench.datasets.base import Doc
 from drbench.providers import make
 from drbench.providers._http import unwrap_values
 from drbench.providers.deepread import fields
-from drbench.providers.extend import _run
+from drbench.providers.extend import _run, to_extend_schema
 from drbench.providers.reducto import normalise
 
 
@@ -36,6 +36,33 @@ def test_system_names():
     assert make("extend:operator").base_processor == "extraction_operator"
     with pytest.raises(ValueError):
         make("extend:light")
+
+
+def test_extend_schema_dialect():
+    schema = {
+        "type": "object", "title": "T", "additionalProperties": False, "required": ["name", "rows"],
+        "properties": {
+            "name": {"type": "string", "description": "the name", "minLength": 1},
+            "amount": {"type": ["number", "null"], "nullable": True},
+            "either": {"type": ["number", "string", "null"]},
+            "kind": {"type": "string", "enum": ["a", "b"]},
+            "tags": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+            "rows": {"type": "array", "items": {"type": "object", "properties": {
+                "n": {"type": "integer"}, "ok": {"type": "boolean"}}, "required": ["n"]}},
+        },
+    }
+    assert to_extend_schema(schema) == {
+        "type": "object", "title": "T", "required": ["name", "rows"],
+        "properties": {
+            "name": {"type": ["string", "null"], "description": "the name"},
+            "amount": {"type": ["number", "null"]},
+            "either": {"type": ["string", "null"]},
+            "kind": {"type": ["string", "null"], "enum": ["a", "b", None]},
+            "tags": {"type": "array", "items": {"type": "string"}},
+            "rows": {"type": "array", "items": {"type": "object", "properties": {
+                "n": {"type": ["integer", "null"]}, "ok": {"type": ["boolean", "null"]}}, "required": ["n"]}},
+        },
+    }
 
 
 def test_extend_run_object_is_found_wrapped_or_bare():

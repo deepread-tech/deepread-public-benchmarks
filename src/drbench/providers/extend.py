@@ -9,6 +9,11 @@ JSON Schema — polled on `GET /extract_runs/{id}`. Modes: `performance`
 (`extraction_performance`, Extend's default) and `operator`
 (`extraction_operator`, its agent for long, table-heavy documents). Citations
 are off so `output.value` is plain values.
+
+Extend speaks its own dialect of JSON Schema (https://docs.extend.ai/extraction/schema):
+every primitive field must be nullable, every enum must offer null, and
+validation keywords are rejected. `to_extend_schema` rewrites the schema into
+that form; the fields, their nesting and their descriptions are unchanged.
 """
 
 from __future__ import annotations
@@ -58,7 +63,7 @@ class Extend:
                     "file": {"id": file_id},
                     "config": {
                         "baseProcessor": self.base_processor,
-                        "schema": schema,
+                        "schema": to_extend_schema(schema),
                         "advancedOptions": {"citationsEnabled": False},
                     },
                 }
@@ -89,6 +94,45 @@ class Extend:
         if pages is not None:
             usage["pages"] = pages
         return extraction, usage
+
+
+PRIMITIVES = {"string", "number", "integer", "boolean"}
+# Keywords Extend rejects: composition, constants, and type-specific validation.
+DROPPED = {
+    "$schema", "$id", "$comment", "$defs", "definitions", "anyOf", "oneOf", "allOf", "not", "if", "then",
+    "else", "const", "default", "examples", "pattern", "format", "minimum", "maximum", "exclusiveMinimum",
+    "exclusiveMaximum", "multipleOf", "minLength", "maxLength", "minItems", "maxItems", "uniqueItems",
+    "minProperties", "maxProperties", "additionalProperties", "patternProperties", "dependencies", "nullable",
+}
+
+
+def to_extend_schema(node: Any, *, array_item: bool = False) -> Any:
+    """The schema in Extend's dialect: primitive fields `["<type>", "null"]`
+    (except array items, which Extend keeps non-nullable), enums with a null
+    option, no validation keywords. A field that allows several primitive
+    types (`["number", "string"]`) becomes a string, the one type that can
+    hold every such value."""
+    if not isinstance(node, dict):
+        return node
+    out: dict[str, Any] = {}
+    for key, value in node.items():
+        if key in DROPPED:
+            continue
+        if key == "properties" and isinstance(value, dict):
+            out[key] = {name: to_extend_schema(sub) for name, sub in value.items()}
+        elif key == "items":
+            out[key] = to_extend_schema(value, array_item=True)
+        elif key == "enum" and isinstance(value, list):
+            out[key] = [v for v in value if isinstance(v, str)] + [None]
+        else:
+            out[key] = value
+    declared = out.get("type")
+    types = declared if isinstance(declared, list) else [declared] if declared else []
+    if types and set(types) <= PRIMITIVES | {"null"}:
+        kinds = [t for t in types if t != "null"]
+        kind = kinds[0] if len(kinds) == 1 else "string"
+        out["type"] = kind if array_item else [kind, "null"]
+    return out
 
 
 def _run(body: Any) -> dict:
