@@ -48,7 +48,8 @@ def test_extend_schema_dialect():
             "amount": {"type": ["number", "null"], "nullable": True},
             "either": {"type": ["number", "string", "null"]},
             "kind": {"type": "string", "enum": ["a", "b"]},
-            "tags": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+            "tags": {"type": "array", "items": {"type": "string", "description": "dropped: items carry only a type"},
+                     "minItems": 1},
             "rows": {"type": "array", "items": {"type": "object", "properties": {
                 "n": {"type": "integer"}, "ok": {"type": "boolean"}}, "required": ["n"]}},
         },

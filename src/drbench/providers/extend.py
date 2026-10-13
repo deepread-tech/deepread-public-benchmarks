@@ -131,7 +131,9 @@ def to_extend_schema(node: Any, *, array_item: bool = False) -> Any:
     if types and set(types) <= PRIMITIVES | {"null"}:
         kinds = [t for t in types if t != "null"]
         kind = kinds[0] if len(kinds) == 1 else "string"
-        out["type"] = kind if array_item else [kind, "null"]
+        if array_item:
+            return {"type": kind}  # a primitive array item may carry nothing but its type
+        out["type"] = [kind, "null"]
     return out
 
 
