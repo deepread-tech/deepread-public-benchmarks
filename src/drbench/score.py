@@ -17,7 +17,7 @@ from .datasets import Dataset, Doc
 
 
 def score(dataset: Dataset, docs: list[Doc], runs_dir: Path, labels: str = "official",
-          systems: list[str] | None = None) -> dict:
+          systems: list[str] | None = None, sample: Path | None = None) -> dict:
     base = runs_dir / dataset.name
     found = sorted(p.name for p in base.iterdir() if p.is_dir()) if base.is_dir() else []
     systems = systems or found
@@ -25,6 +25,7 @@ def score(dataset: Dataset, docs: list[Doc], runs_dir: Path, labels: str = "offi
         "dataset": dataset.name,
         "labels": labels,
         "documents": len(docs),
+        "sample": sample.as_posix() if sample else None,  # the id file, when not the whole benchmark
         "graded_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "systems": {},
     }

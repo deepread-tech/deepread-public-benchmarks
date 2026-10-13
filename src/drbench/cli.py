@@ -29,12 +29,15 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("-j", "--concurrency", type=int, default=4)
     p.add_argument("--retries", type=int, default=3)
     p.add_argument("--limit", type=int, help="only the first N documents (smoke test)")
+    p.add_argument("--ids", type=Path, help="only the documents listed in this file, one id per line "
+                   "(e.g. datasets/longextract/sample-20.txt)")
     p.add_argument("--force", action="store_true", help="redo documents that already have an output")
     p.add_argument("--retry-failures", action="store_true", help="redo only documents whose output is a failure")
 
     p = sub.add_parser("grade", help="score saved outputs (offline)")
     p.add_argument("--dataset", required=True, choices=list(DATASETS))
     p.add_argument("--labels", default="official", choices=["official", "corrected"])
+    p.add_argument("--ids", type=Path, help="grade only the documents listed in this file (the file the run used)")
     p.add_argument("--system", action="append", help="only these systems (default: every run directory)")
 
     p = sub.add_parser("report", help="print leaderboard tables from the scores (offline)")
@@ -48,7 +51,7 @@ def main(argv: list[str] | None = None) -> int:
         from .runner import run
 
         dataset = DATASETS[args.dataset]
-        docs = dataset.docs(args.data)
+        docs = select(dataset.docs(args.data), args.ids)
         if args.limit:
             docs = docs[: args.limit]
         counts = run(dataset, make(args.system), docs, args.runs, concurrency=args.concurrency,
@@ -59,7 +62,8 @@ def main(argv: list[str] | None = None) -> int:
         from .score import score
 
         dataset = DATASETS[args.dataset]
-        result = score(dataset, dataset.docs(args.data, args.labels), args.runs, args.labels, args.system)
+        docs = select(dataset.docs(args.data, args.labels), args.ids)
+        result = score(dataset, docs, args.runs, args.labels, args.system, sample=args.ids)
         from .report import table
 
         print()
@@ -69,6 +73,20 @@ def main(argv: list[str] | None = None) -> int:
 
         print(report(args.runs, args.dataset, args.labels))
     return 0
+
+
+def select(docs: list, ids_file: Path | None) -> list:
+    """The documents named in `ids_file` (one id per line, `#` comments), in that
+    order; every document of the dataset when there is no file."""
+    if ids_file is None:
+        return docs
+    wanted = [line.strip() for line in ids_file.read_text().splitlines()]
+    wanted = [w for w in wanted if w and not w.startswith("#")]
+    by_id = {doc.id: doc for doc in docs}
+    missing = [w for w in wanted if w not in by_id]
+    if missing:
+        sys.exit(f"{ids_file}: {len(missing)} id(s) not in the dataset, e.g. {missing[0]!r}")
+    return [by_id[w] for w in wanted]
 
 
 if __name__ == "__main__":

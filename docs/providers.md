@@ -18,6 +18,8 @@ each key is used only for that vendor's calls.
 | `reducto:deep-extract` (default) | [Reducto](https://reducto.ai) | Deep Extract (`settings.deep_extract = true`) | `REDUCTO_API_KEY` | `POST /upload` → `POST /extract_async` → poll `GET /job/{id}` |
 | `reducto:extract` | Reducto | standard Extract | `REDUCTO_API_KEY` | same |
 | `landingai:dpt-3-pro` (default) | [LandingAI ADE](https://landing.ai) | DPT-3 Pro parse + Extract | `VISION_AGENT_API_KEY` | `POST /v2/parse/jobs` → poll → `POST /v2/extract/jobs` → poll |
+| `extend:performance` (default) | [Extend](https://extend.ai) | Extract, `extraction_performance` | `EXTEND_API_KEY` | `POST /files/upload` → `POST /extract_runs` → poll `GET /extract_runs/{id}` |
+| `extend:operator` | Extend | Extract, `extraction_operator` (agent for long, table-heavy documents) | `EXTEND_API_KEY` | same |
 
 ## Getting keys
 
@@ -28,12 +30,16 @@ each key is used only for that vendor's calls.
 - **LandingAI**: sign up at <https://ade.landing.ai> (self-serve, no card),
   Settings → API key. New accounts come with free credits that expire after
   90 days.
+- **Extend**: sign up at <https://dashboard.extend.ai> (self-serve), Settings →
+  API keys. New accounts come with 10,000 free credits.
 
 Prices change; check each vendor's pricing page before a full sweep. At the
 time of writing (October 2026): Reducto lists Extract at $20 and Deep Extract
 at $40 per 1,000 pages; LandingAI bills credits per page parsed plus per
 character extracted (roughly $10–20 per 1,000 pages for DPT-3 Pro plus
-extraction). LongExtractBench alone is 19,528 pages.
+extraction); Extend bills 3 credits per page for `extraction_performance` and
+5 for `extraction_operator`, plus 2 per page parsed, at $0.0125 a credit
+(about $60 and $90 per 1,000 pages). LongExtractBench alone is 19,528 pages.
 
 ## Per-vendor notes
 
@@ -66,6 +72,18 @@ does not pay for the parse again. ADE's documented limits at the time of
 writing: 6,000 pages per PDF, so the largest LongExtractBench documents fail
 the parse step — counted as failures. Schema-violation warnings from the
 extract step are kept in `_meta.usage`.
+
+### Extend
+
+`POST /files/upload` (multipart `file`) returns a file `id`; `POST /extract_runs`
+is called with `file.id` and an inline `config`: `baseProcessor` by mode
+(`extraction_performance` or `extraction_operator`), `schema = <the schema>`
+and `advancedOptions.citationsEnabled = false` (plain values). Requests carry
+`x-extend-api-version: 2026-02-09`. The run is polled on
+`GET /extract_runs/{id}` until `PROCESSED`, `FAILED` or `CANCELLED`; the
+extraction is `output.value`. A run that fails with `OUT_OF_CREDITS` stops the
+whole sweep like a rejected key would. Credits and the page count are kept in
+`_meta.usage`.
 
 ## Adding a system
 

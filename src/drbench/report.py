@@ -21,7 +21,8 @@ def report(runs_dir: Path, datasets: list[str] | None = None, labels: str = "off
 
 def table(dataset: Dataset, scores: dict) -> str:
     label_note = "" if scores.get("labels", "official") == "official" else f" — {scores['labels']} labels"
-    lines = [f"### {dataset.title}{label_note}", ""]
+    sample_note = f" — {scores['documents']}-document sample ({scores['sample']})" if scores.get("sample") else ""
+    lines = [f"### {dataset.title}{sample_note}{label_note}", ""]
     lines.append("| System | " + " | ".join(c.label for c in dataset.columns) + " |")
     lines.append("|---|" + "|".join("---:" for _ in dataset.columns) + "|")
     ranked = sorted(scores["systems"].items(), key=lambda kv: -(kv[1]["summary"].get("accuracy") or 0))

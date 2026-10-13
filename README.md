@@ -82,6 +82,7 @@ pip install -e ".[dev]"
 export DEEPREAD_API_KEY=...        # https://app.deepread.tech  (dashboard → API keys)
 export REDUCTO_API_KEY=...         # https://studio.reducto.ai
 export VISION_AGENT_API_KEY=...    # https://ade.landing.ai
+export EXTEND_API_KEY=...          # https://dashboard.extend.ai
 
 # 2. data
 drbench fetch charity                         # 1.7 GB from Hugging Face
@@ -95,14 +96,24 @@ drbench run --dataset charity --system reducto -j 4
 drbench run --dataset charity --system landingai -j 4
 drbench run --dataset longextract --system deepread --limit 5   # smoke test
 
+# a fixed sample instead of the whole benchmark (same file for run and grade)
+drbench run --dataset longextract --system extend --ids datasets/longextract/sample-20.txt
+drbench grade --dataset longextract --ids datasets/longextract/sample-20.txt
+
 # 4. score and show the table (offline)
 drbench grade --dataset charity
 drbench report
 ```
 
 Systems: `deepread:extract`, `deepread:deep-extract`, `reducto:extract`,
-`reducto:deep-extract`, `landingai:dpt-3-pro`. `drbench grade` on our
-committed `runs/` reproduces the table above without any key.
+`reducto:deep-extract`, `landingai:dpt-3-pro`, `extend:performance`,
+`extend:operator`. `drbench grade` on our committed `runs/` reproduces the
+table above without any key.
+
+Samples: `datasets/longextract/sample-20.txt` is the 20 shortest
+LongExtractBench documents (835 pages instead of 19,528) and
+`datasets/charity/sample-40.txt` the first 40 Kleister-Charity documents
+(1,143 pages). A table built from a sample says so in its heading.
 
 ## Repository layout
 
@@ -111,7 +122,7 @@ datasets/<name>/         schema.json sent to every system, document lists, answe
 scripts/                 build_hf_datasets.py — how the Hugging Face copies were assembled
 src/drbench/             fetch / run / grade / report
   datasets/              one module per benchmark: download, answer key, scoring
-  providers/             one adapter per API: deepread, reducto, landingai
+  providers/             one adapter per API: deepread, reducto, landingai, extend
   graders/               micro1's LongExtractBench grader, vendored unmodified (MIT)
 runs/<dataset>/<system>/ raw outputs behind the table, plus scores.json
 official/                DeepRead scored with each benchmark's own scorer, as a cross-check

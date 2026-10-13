@@ -2,10 +2,11 @@ from __future__ import annotations
 
 from .base import Provider
 from .deepread import DeepRead
+from .extend import Extend
 from .landingai import LandingAI
 from .reducto import Reducto
 
-PROVIDERS = {"deepread": DeepRead, "reducto": Reducto, "landingai": LandingAI}
+PROVIDERS = {"deepread": DeepRead, "reducto": Reducto, "landingai": LandingAI, "extend": Extend}
 
 
 def make(system: str) -> Provider:

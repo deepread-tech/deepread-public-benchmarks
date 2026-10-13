@@ -1,9 +1,14 @@
 import json
 
+import pytest
+
 from drbench import envelope
+from drbench.cli import select
+from drbench.datasets.base import Doc
 from drbench.providers import make
 from drbench.providers._http import unwrap_values
 from drbench.providers.deepread import fields
+from drbench.providers.extend import _run
 from drbench.providers.reducto import normalise
 
 
@@ -26,6 +31,42 @@ def test_system_names():
     assert make("reducto").name == "reducto-deep-extract"
     assert make("reducto:extract").name == "reducto-extract"
     assert make("landingai").name == "landingai-dpt-3-pro"
+    assert make("extend").name == "extend-performance"
+    assert make("extend:operator").name == "extend-operator"
+    assert make("extend:operator").base_processor == "extraction_operator"
+    with pytest.raises(ValueError):
+        make("extend:light")
+
+
+def test_extend_run_object_is_found_wrapped_or_bare():
+    bare = {"object": "extract_run", "id": "exr_1", "status": "PROCESSED"}
+    assert _run(bare) is bare
+    assert _run({"success": True, "extractRun": bare}) is bare
+    assert _run(None) == {}
+
+
+def test_table_heading_names_a_sample():
+    from drbench.datasets import DATASETS
+    from drbench.report import table
+
+    scores = {"dataset": "longextract", "labels": "official", "documents": 20,
+              "sample": "datasets/longextract/sample-20.txt",
+              "systems": {"x": {"summary": {"accuracy": 0.5, "completed": 20}, "docs": {}}}}
+    heading = table(DATASETS["longextract"], scores).splitlines()[0]
+    assert heading.endswith("— 20-document sample (datasets/longextract/sample-20.txt)")
+    scores["sample"] = None
+    assert "sample" not in table(DATASETS["longextract"], scores).splitlines()[0]
+
+
+def test_select_keeps_file_order_and_rejects_unknown_ids(tmp_path):
+    docs = [Doc(id=i, pdf=tmp_path / f"{i}.pdf", schema={}, ground_truth=None) for i in ("a", "b", "c")]
+    assert select(docs, None) == docs
+    ids = tmp_path / "ids.txt"
+    ids.write_text("# a comment\nc\n\na\n")
+    assert [d.id for d in select(docs, ids)] == ["c", "a"]
+    ids.write_text("a\nzzz\n")
+    with pytest.raises(SystemExit):
+        select(docs, ids)
 
 
 def test_deepread_fields_are_unwrapped():

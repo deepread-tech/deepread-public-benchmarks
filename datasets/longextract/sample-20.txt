@@ -1,0 +1,22 @@
+# LongExtractBench: the 20 shortest of the 50 documents (835 pages in all),
+# chosen by page count so one run stays affordable. One document id per line.
+721d346e__table_6
+std__Bureau_of_Economic_Analysis_GDP_release_-_gdp3q22_2nd_merge
+4a20762e__K213919
+m1__Language_speakers_and_linguistic_proficiency_census_tables
+06_10_26_American_Community_Survey_ACS_5_year_estimates_f507236a_sampl
+m1__Mortality_statistics_and_preventable_mortality_reports
+2642087e__Inactive Ingredient Search for Approved Drug Products
+6c9a8d3f__auslaendische-bevoelkerung-kreise-pdf
+m1__Air_quality_monitoring_report
+m1__Manufacturing_Industry_Datasets
+06_10_26_Budget_vs_actuals_report_cbd029d1_2024_09_SEP_Period_3_MFR_1
+f47be8a4__aaq-mntrpt-2005-vic-report-final
+m1__Calibration__Postsecondary_Graduation_-_college___UNI_stats
+ed4f34de__table4_ac
+Energy_consumption___efficiency_report
+c9b6b95b__TABLE3 Maritimes
+American_Community_Survey__ACS__5-year_estimates
+53cf7eae__foi-eir-request-log-2023-1
+std__Board_examination_score_report_-_GCSE-Full-Course-results-summer-2024-2-202
+Wastewater_discharge_monitoring_report___permit_compliance_summary
