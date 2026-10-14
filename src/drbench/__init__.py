@@ -1,5 +1,8 @@
 """drbench — run public structured-extraction benchmarks against document AI APIs.
 
+    drbench short-run                          reproduce our published run: 2,614 pages per system (paid)
+    drbench full-run                           every document of the three benchmarks: 30,803 pages per system (paid)
+
     drbench fetch <dataset>                    download a dataset (your own token where needed)
     drbench run --dataset D --system S         call one API on every document (paid)
     drbench grade --dataset D                  score the saved outputs (offline)
@@ -10,7 +13,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 
 def repo_root() -> Path:

@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "deepread-bench"
-version = "0.1.0"
-description = "Reproducible structured-extraction benchmarks: run DeepRead, Reducto and LandingAI on Kleister-Charity, DocILE and LongExtractBench with your own API keys."
+version = "0.2.0"
+description = "Reproducible structured-extraction benchmarks: run DeepRead, Reducto, Extend and LandingAI on Kleister-Charity, DocILE and LongExtractBench with your own API keys, in one command."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }

@@ -40,6 +40,42 @@ def table(dataset: Dataset, scores: dict) -> str:
     return "\n".join(lines)
 
 
+def summary(runs_dir: Path, parts, systems, labels: str = "official") -> str:
+    """One number per system per benchmark — the table the README shows — from
+    the `scores.json` of each part of a short or full run."""
+    from .suite import provider_name
+
+    scores = {}
+    for part in parts:
+        path = runs_dir / part.dataset / ("scores.json" if labels == "official" else f"scores.{labels}.json")
+        if path.is_file():
+            scores[part.dataset] = json.loads(path.read_text())
+    if not scores:
+        return "no scores found"
+    heads = [f"{part.title} ({part.documents} docs)" for part in parts if part.dataset in scores]
+    lines = ["| System | " + " | ".join(heads) + " |", "|---|" + "|".join("---:" for _ in heads) + "|"]
+    for system in systems:
+        name = provider_name(system)
+        cells = []
+        for part in parts:
+            if part.dataset not in scores:
+                continue
+            data = scores[part.dataset]["systems"].get(name)
+            if not data:
+                cells.append("–")
+                continue
+            s = data["summary"]
+            cell = f"{100 * (s.get('accuracy') or 0):.1f}%"
+            if s.get("completed", part.documents) < part.documents:
+                cell += f" ({s['completed']}/{part.documents} docs)"
+            cells.append(cell)
+        lines.append(f"| {system.label} | " + " | ".join(cells) + " |")
+    lines.append("")
+    lines.append("Accuracy = answer-key values the system got right, averaged per document; "
+                 "a document the system did not return scores 0.")
+    return "\n".join(lines)
+
+
 def _fmt(value, column: Column, total: int | None) -> str:
     if value is None:
         return "–"
