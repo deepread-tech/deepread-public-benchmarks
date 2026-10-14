@@ -9,9 +9,11 @@ assembled from the original repository and Applica's public S3 bucket.
 `test-A` labels were never released and the scoring server (gonito.net) is
 offline, so dev-0 is the largest split anyone can score.
 
-Metric: the benchmark's own one, MultiLabel-F1 over upper-cased `field=value`
-labels ("F1 (UC)" in the Kleister `config.txt`), computed over all 440 documents
-(a document the system failed contributes only misses). Values are normalised
+Headline: accuracy, the share of a document's answer-key values the system got
+right (upper-cased `field=value` labels), averaged over the documents; a document
+the system failed scores 0. Also reported: the benchmark's own metric,
+MultiLabel-F1 over the same labels ("F1 (UC)" in the Kleister `config.txt`),
+pooled over all documents. Values are normalised
 the way the Kleister README prescribes before comparison: spaces as `_`, dates
 as YYYY-MM-DD, money as a number with two decimals. The implementation here is
 checked against GEval 1.14.2.0 output in tests/test_charity.py.
@@ -123,6 +125,8 @@ def grade_labels(pred: list[str], expected: list[str]) -> dict:
         "tp_uc": len(pu & eu), "fp_uc": len(pu - eu), "fn_uc": len(eu - pu),
         "tp": len(p & e), "fp": len(p - e), "fn": len(e - p),
         "exact": sorted(pu) == sorted(eu),
+        # the headline, per document: answer-key values the system got right
+        "accuracy": len(pu & eu) / len(eu) if eu else 1.0,
         "doc_f1_uc": _f1(len(pu & eu), len(pu - eu), len(eu - pu)),
         "fields": {},
     }
@@ -201,8 +205,9 @@ class Charity:
         uc = _prf(tp_uc, fp_uc, fn_uc)
         out = {
             "documents": len(per_doc),
-            # the headline: answer-key values the system got right, over all 440 documents
-            "accuracy": uc["recall"],
+            # the headline: answer-key values the system got right, averaged per document
+            # (a failed document contributes 0); recall_uc is the same thing pooled
+            "accuracy": sum(d["accuracy"] for d in per_doc) / len(per_doc) if per_doc else 0.0,
             "f1_uc": uc["f1"],
             "precision_uc": uc["precision"],
             "recall_uc": uc["recall"],

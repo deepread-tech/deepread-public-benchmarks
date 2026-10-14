@@ -62,6 +62,10 @@ def test_grade_and_aggregate():
             "tax_detail_rate": "7.5%", "vendor_name": "Extra Co"}
     g = d.grade(pred, gt, SCHEMA)
     assert (g["tp"], g["fp"], g["fn"]) == (4, 1, 1)
-    agg = d.aggregate([g, d.grade({}, gt, SCHEMA)])
+    assert g["accuracy"] == 0.8  # 4 of the 5 answer-key values
+    empty = d.grade({}, gt, SCHEMA)
+    assert empty["accuracy"] == 0.0
+    agg = d.aggregate([g, empty])
+    assert agg["accuracy"] == 0.4  # the per-document mean: (0.8 + 0) / 2
     assert (agg["precision"], round(agg["recall"], 3)) == (0.8, 0.4)
     assert agg["fields"]["tax_detail_rate"]["recall"] == 0.25

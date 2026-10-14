@@ -48,7 +48,8 @@ def test_reproduces_geval_on_corrected_labels():
     assert _close(s["f1"], 76.5)
     assert _close(s["mean_f1_uc"], 84.2)
     assert _close(s["accuracy_uc"], 22.7, ACC_TOL)
-    assert s["accuracy"] == s["recall_uc"]  # the headline is "answer-key values got right"
+    # the headline averages "answer-key values got right" per document; pooled it is the recall
+    assert 0.8 < s["accuracy"] < 0.9 and abs(s["accuracy"] - s["recall_uc"]) < 0.03
     geval_fields = {
         "address__post_town": 92.9, "address__postcode": 91.8, "address__street_line": 41.3,
         "charity_name": 66.3, "charity_number": 98.85, "report_date": 98.0,
@@ -69,6 +70,15 @@ def test_reproduces_geval_on_official_labels():
     assert _close(s["f1"], 73.0)
     assert _close(s["mean_f1_uc"], 80.7)
     assert _close(s["accuracy_uc"], 16.0, ACC_TOL)
+
+
+def test_headline_is_the_per_document_mean_and_a_failed_document_scores_zero():
+    expected = ["charity_name=X", "charity_number=1", "report_date=2020-01-01", "income_annually_in_british_pounds=1.00"]
+    half = grade_labels(["charity_name=X", "charity_number=1", "charity_number=2"], expected)
+    assert half["accuracy"] == 0.5  # 2 of 4 right; the extra value is a false positive, not a miss
+    assert grade_labels([], expected)["accuracy"] == 0.0
+    agg = Charity().aggregate([half, grade_labels([], expected)])
+    assert agg["accuracy"] == 0.25 and agg["recall_uc"] == 0.25
 
 
 def test_labels_follow_kleister_normalisation():

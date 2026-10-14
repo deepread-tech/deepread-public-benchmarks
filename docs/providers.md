@@ -9,15 +9,20 @@ retry polls the job already paid for; `_meta.usage` in the output envelope
 holds whatever the vendor reports (pages, credits, job ids).
 
 Keys are read from environment variables (or a `.env` file via your shell);
-each key is used only for that vendor's calls.
+each key is used only for that vendor's calls. Nothing takes a key as a
+command-line flag, so no key ends up in your shell history.
 
 | System id | Vendor | Mode | Key | API calls |
 |---|---|---|---|---|
 | `deepread:extract` | [DeepRead](https://deepread.tech) | `extract` pipeline | `DEEPREAD_API_KEY` | `POST /v1/process` → poll `GET /v1/jobs/{id}` |
 | `deepread:deep-extract` (default) | DeepRead | `deep-extract` pipeline | `DEEPREAD_API_KEY` | same |
+| `deepread:extract-selfhost` | DeepRead | `extract` on DeepRead's self-hosted OCR engine | `DEEPREAD_API_KEY` | same |
+| `deepread:deep-extract-selfhost` | DeepRead | `deep-extract` on the self-hosted OCR engine | `DEEPREAD_API_KEY` | same |
 | `reducto:deep-extract` (default) | [Reducto](https://reducto.ai) | Deep Extract (`settings.deep_extract = true`) | `REDUCTO_API_KEY` | `POST /upload` → `POST /extract_async` → poll `GET /job/{id}` |
 | `reducto:extract` | Reducto | standard Extract | `REDUCTO_API_KEY` | same |
 | `landingai:dpt-3-pro` (default) | [LandingAI ADE](https://landing.ai) | DPT-3 Pro parse + Extract | `VISION_AGENT_API_KEY` | `POST /v2/parse/jobs` → poll → `POST /v2/extract/jobs` → poll |
+| `extend:performance` (default) | [Extend](https://extend.ai) | Extract, `extraction_performance` | `EXTEND_API_KEY` | `POST /files/upload` → `POST /extract_runs` → poll `GET /extract_runs/{id}` |
+| `extend:operator` | Extend | Extract, `extraction_operator` (agent for long, table-heavy documents) | `EXTEND_API_KEY` | same |
 
 ## Getting keys
 
@@ -28,12 +33,26 @@ each key is used only for that vendor's calls.
 - **LandingAI**: sign up at <https://ade.landing.ai> (self-serve, no card),
   Settings → API key. New accounts come with free credits that expire after
   90 days.
+- **Extend**: sign up at <https://dashboard.extend.ai> (self-serve), Settings →
+  API keys. New accounts come with 10,000 free credits.
 
-Prices change; check each vendor's pricing page before a full sweep. At the
-time of writing (October 2026): Reducto lists Extract at $20 and Deep Extract
-at $40 per 1,000 pages; LandingAI bills credits per page parsed plus per
-character extracted (roughly $10–20 per 1,000 pages for DPT-3 Pro plus
-extraction). LongExtractBench alone is 19,528 pages.
+Prices change; check each vendor's pricing page before a full sweep. What each
+system cost us per page on the October 2026 run, which is also what
+`drbench short-run` and `drbench full-run` use for their estimates
+(`src/drbench/suite.py`):
+
+| System | $ / 1,000 pages | How it is billed |
+|---|---:|---|
+| DeepRead extract | $15 | list price, paid in DeepRead credits |
+| DeepRead deep-extract | $35 | list price, paid in DeepRead credits |
+| Reducto Extract | $20 | list price |
+| Reducto Deep Extract | $40 | list price |
+| Extend Performance | $62.50 | 5 credits a page at $0.0125 (3 to extract + 2 to parse) |
+| Extend Operator | $87.50 | 7 credits a page at $0.0125 (5 to extract + 2 to parse) |
+| LandingAI ADE | $61 | credits per page parsed plus per character extracted; this is what the run averaged |
+
+The short run is 2,614 pages per system and the full run 30,803
+(LongExtractBench alone is 19,528 of them).
 
 ## Per-vendor notes
 
@@ -66,6 +85,18 @@ does not pay for the parse again. ADE's documented limits at the time of
 writing: 6,000 pages per PDF, so the largest LongExtractBench documents fail
 the parse step — counted as failures. Schema-violation warnings from the
 extract step are kept in `_meta.usage`.
+
+### Extend
+
+`POST /files/upload` (multipart `file`) returns a file `id`; `POST /extract_runs`
+is called with `file.id` and an inline `config`: `baseProcessor` by mode
+(`extraction_performance` or `extraction_operator`), `schema = <the schema>`
+and `advancedOptions.citationsEnabled = false` (plain values). Requests carry
+`x-extend-api-version: 2026-02-09`. The run is polled on
+`GET /extract_runs/{id}` until `PROCESSED`, `FAILED` or `CANCELLED`; the
+extraction is `output.value`. A run that fails with `OUT_OF_CREDITS` stops the
+whole sweep like a rejected key would. Credits and the page count are kept in
+`_meta.usage`.
 
 ## Adding a system
 
