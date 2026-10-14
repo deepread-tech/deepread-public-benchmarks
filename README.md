@@ -32,12 +32,13 @@ the system could not process counts as 0.
 | **DeepRead extract** | 79.4% | 91.7% | 97.6% | **89.6%** |
 | Extend Operator | 75.0% | 91.7% | 99.6% | 88.8% |
 | Reducto Deep Extract | 72.3% | 91.0% | 94.9% | 86.1% |
-| Extend Performance | 68.6% | 89.2% | 77.5% | 78.4% |
+| Extend Performance | 68.6% | 89.2% | 77.5%\* | 78.4% |
 | LandingAI ADE | 72.4% | 89.8% | 70.8%\* | 77.7% |
 | Reducto Extract | 69.1% | 91.1% | 47.6% | 69.3% |
 
-\* LandingAI returned 18 of the 20 LongExtractBench documents; the two it
-failed on (internal errors after four attempts) count as 0.
+\* On LongExtractBench, Extend Performance returned 19 of the 20 documents
+and LandingAI 18 (jobs that never finished or failed with internal errors
+after four attempts); each missing document counts as 0.
 
 Run on 13 October 2026, 2,614 pages per system, the same documents and the
 same schema for everyone. DeepRead extract here runs on DeepRead's own OCR
@@ -45,6 +46,42 @@ engine (`pipeline=extract-selfhost`), the engine the published numbers come
 from. The other systems are the vendors' self-serve APIs at their default
 settings, described in [docs/providers.md](docs/providers.md).
 `drbench short-run` repeats exactly this run.
+
+### The raw outputs, and what `drbench grade` gives on them
+
+Every output of that run on Kleister-Charity and LongExtractBench is committed
+under [`runs/`](runs/) — one file per document and system — so anyone can
+re-score it offline with `drbench grade` and no API key. DocILE outputs are
+not committed: Rossum's terms forbid redistributing its data. The table above
+was scored by our internal scorer; `drbench grade` on the committed outputs
+gives:
+
+| System | Kleister-Charity (40 docs) | LongExtractBench (20 docs) |
+|---|---:|---:|
+| DeepRead extract | 80.6% | 97.6% |
+| Extend Operator | 84.1% | 99.6% |
+| Reducto Deep Extract | 80.6% | 94.9% |
+| Extend Performance | 80.9% | 77.5% (19/20) |
+| LandingAI ADE | 80.3% | 70.8% (18/20) |
+| Reducto Extract | 81.3% | 44.0% |
+
+LongExtractBench agrees to the decimal for five systems, since both scorers
+run micro1's grader. Kleister-Charity is 8–11 points lower for every system
+because `drbench grade` applies only the benchmark's own matching rule (an
+upper-cased, exact `field=value` match after Kleister's normalisation), while
+our scorer also accepts a value that a reviewer model judges immaterially
+different, such as a street line with the district appended or a charity
+name with "The" in front. The ranking is close either way. Reducto Extract's
+LongExtractBench score is 3.6 points lower here because, on six documents
+where it returned under 1% of the rows, our scorer credited it with more
+than the strict "every missed row counts as wrong" rule gives.
+
+```bash
+drbench grade --dataset charity --ids datasets/charity/sample-40.txt
+drbench grade --dataset longextract --ids datasets/longextract/sample-20.txt
+```
+
+`scripts/import_oct2026_run.py` documents how `runs/` was assembled.
 
 ## How we chose the documents
 
@@ -161,7 +198,10 @@ any key, so a committed run can be re-scored by anyone.
    `runs/<benchmark>/<system>/`.
 3. The same code scores every output against the benchmark's answer key.
    Formatting differences (upper/lower case, `$1,200` vs `1200`, `3/4/2020`
-   vs `2020-03-04`) are not errors; wrong or missing values are.
+   vs `2020-03-04`) are not errors; wrong or missing values are. The
+   published table additionally lets a reviewer model accept a difference it
+   judges immaterial; `drbench grade` does not, which is why its
+   Kleister-Charity numbers above are lower.
 4. Accuracy is the share of a document's answer-key values the system got
    right, averaged over the documents. LongExtractBench is scored by the
    benchmark's own grader, where every row of every table counts.
@@ -174,13 +214,13 @@ handled, and the benchmarks' own metrics (F1, precision, recall), which
 
 ```
 datasets/<name>/         schema.json sent to every system, document lists, answer-key corrections
-scripts/                 build_hf_datasets.py — how the Hugging Face copies were assembled
+scripts/                 how the Hugging Face copies and the committed runs/ were assembled
 src/drbench/             short-run / full-run, and the steps they are made of: fetch / run / grade / report
   suite.py               the two runs: which documents, which systems, what they cost
   datasets/              one module per benchmark: download, answer key, scoring
   providers/             one adapter per API: deepread, reducto, landingai, extend
   graders/               micro1's LongExtractBench grader, vendored unmodified (MIT)
-runs/<dataset>/<system>/ raw outputs of a run, plus scores.json
+runs/<dataset>/<system>/ raw outputs of the October 2026 run (Charity, LongExtract), plus scores.json
 official/                DeepRead scored with each benchmark's own scorer, as a cross-check
 docs/                    methodology, datasets and licences, vendors and their APIs
 tests/
