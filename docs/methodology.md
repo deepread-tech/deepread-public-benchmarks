@@ -9,15 +9,22 @@ schema into each API's request shape (see [providers.md](providers.md)).
 ## 0. The headline number: accuracy
 
 The README shows one number per system and benchmark: **accuracy, the share
-of answer-key values the system got right**, over every document in the
-benchmark. A document the system failed to process counts as all wrong.
+of a document's answer-key values the system got right, averaged over the
+documents**. A document the system failed to process scores 0.
 
-- Kleister-Charity and DocILE: correct values ÷ all values in the answer key,
-  pooled over all documents (in the benchmarks' terms, the recall of their
-  official metric).
+- Kleister-Charity and DocILE: per document, correct values ÷ all values in
+  the answer key, after the normalisation below. (Pooled over all documents
+  instead of averaged, the same count is the recall of the benchmarks'
+  official metric, which `drbench grade` reports too.)
 - LongExtractBench: per document, correct values ÷ all answer-key values
   (cells of every answer-key row, including rows the system missed, plus the
-  document-level fields), averaged over the 50 documents.
+  document-level fields), averaged over the documents.
+
+The published run (`drbench short-run`) is a fixed sample of each benchmark,
+chosen before any system was run: all 500 DocILE validation documents, the
+first 40 Kleister-Charity documents in the dataset's own order, and the 20
+shortest LongExtractBench documents by page count. The README explains the
+choice; the lists are under `datasets/`.
 
 `drbench grade` also reports each benchmark's own metrics — F1, precision and
 recall for Kleister-Charity and DocILE, micro1's row precision, row recall and
@@ -51,10 +58,12 @@ The leaderboard shows the completed count next to every score. How a failed
 document affects the score depends on the benchmark's own convention, kept
 here so our numbers stay comparable with the benchmark's published ones:
 
-- Kleister-Charity and DocILE: the official metrics score every document; a
-  failed document is an empty prediction (all of its labels are misses).
-- LongExtractBench: as on micro1's leaderboard, accuracy is averaged over the
-  documents the system completed. Read it together with the completed count.
+- Kleister-Charity and DocILE: a failed document is an empty prediction — its
+  accuracy is 0 and, in the official metrics, all of its labels are misses.
+- LongExtractBench: the headline accuracy counts a failed document as 0;
+  micro1's own three numbers (row precision, row recall, leaf accuracy) are
+  averaged over the documents the system completed, as on their leaderboard.
+  Read them together with the completed count.
 
 ## 3. The metrics
 

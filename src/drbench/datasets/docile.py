@@ -8,10 +8,13 @@ annotated train+val archive with your token and keeps the 500 validation
 documents; the ground truth is built from the official annotations on your
 machine. `datasets/docile/val_docids.txt` pins the document list.
 
-Metric: value-level per-field F1. Every (document, field, value) in the official
-KILE annotations is one item; a system's values for that field are matched
-after light normalisation (whitespace and case, numeric amounts, dates to ISO,
-currency symbols to ISO codes). This is the text half of DocILE's KILE metric;
+Headline: accuracy, the share of a document's answer-key values the system got
+right, averaged over the documents; a document the system failed scores 0. Every
+(document, field, value) in the official KILE annotations is one item; a
+system's values for that field are matched after light normalisation
+(whitespace and case, numeric amounts, dates to ISO, currency symbols to ISO
+codes). Per-field precision, recall and F1 are reported as well. This is the
+text half of DocILE's KILE metric;
 the official scorer also requires the field's location on the page, which not
 every API returns. For DeepRead, the location-aware official score is in
 official/docile.
@@ -228,6 +231,9 @@ class Docile:
             out["tp"] += tp
             out["fp"] += fp
             out["fn"] += fn
+        # the headline, per document: answer-key values the system got right
+        expected = out["tp"] + out["fn"]
+        out["accuracy"] = out["tp"] / expected if expected else 1.0
         return out
 
     def aggregate(self, per_doc: list[dict]) -> dict:
@@ -235,8 +241,10 @@ class Docile:
         fp = sum(d["fp"] for d in per_doc)
         fn = sum(d["fn"] for d in per_doc)
         prf = _prf(tp, fp, fn)
-        # the headline: answer-key values the system got right, over all 500 documents
-        out = {"documents": len(per_doc), "accuracy": prf["recall"], **prf, "fields": {}}
+        # the headline: answer-key values the system got right, averaged per document
+        # (a failed document contributes 0); recall is the same thing pooled
+        accuracy = sum(d["accuracy"] for d in per_doc) / len(per_doc) if per_doc else 0.0
+        out = {"documents": len(per_doc), "accuracy": accuracy, **prf, "fields": {}}
         for field in sorted({f for d in per_doc for f in d["fields"]}):
             counts = [d["fields"].get(field, {"tp": 0, "fp": 0, "fn": 0}) for d in per_doc]
             out["fields"][field] = _prf(
