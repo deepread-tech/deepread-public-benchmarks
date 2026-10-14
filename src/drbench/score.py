@@ -32,7 +32,7 @@ def score(dataset: Dataset, docs: list[Doc], runs_dir: Path, labels: str = "offi
     for system in systems:
         per_doc: dict[str, dict] = {}
         for doc in docs:
-            env = envelope.read(base / system / f"{doc.id}.json")
+            env = envelope.read(envelope.locate(base / system, doc.id))
             state, reason = envelope.classify(env)
             pred = env["result"] if state == "success" else {}
             scores = dataset.grade(pred, doc.ground_truth, doc.schema)

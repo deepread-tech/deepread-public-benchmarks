@@ -25,6 +25,20 @@ def test_envelope_roundtrip_and_classification(tmp_path):
     assert envelope.classify(None) == ("failure", "no output file")
 
 
+def test_committed_envelopes_may_be_gzipped(tmp_path):
+    import gzip
+
+    out_dir = tmp_path / "runs" / "d" / "s"
+    assert envelope.locate(out_dir, "doc") == out_dir / "doc.json"  # nothing yet: a run writes plain JSON
+    out_dir.mkdir(parents=True)
+    with gzip.open(out_dir / "doc.json.gz", "wt", encoding="utf-8") as f:
+        json.dump({"result": {"a": 1}, "_meta": {"status": "ok"}}, f)
+    assert envelope.locate(out_dir, "doc") == out_dir / "doc.json.gz"
+    assert envelope.read(out_dir / "doc.json.gz") == {"result": {"a": 1}, "_meta": {"status": "ok"}}
+    assert envelope.classify(envelope.read(out_dir / "doc.json.gz")) == ("success", None)
+    assert envelope.read(out_dir / "missing.json.gz") is None
+
+
 def test_system_names():
     assert make("deepread").name == "deepread-deep-extract"
     assert make("deepread:extract").name == "deepread-extract"

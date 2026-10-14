@@ -38,7 +38,7 @@ def run(
     out_dir.mkdir(parents=True, exist_ok=True)
     todo = []
     for doc in docs:
-        out = out_dir / f"{doc.id}.json"
+        out = envelope.locate(out_dir, doc.id)
         if out.is_file() and not force:
             if not (retry_failures and envelope.classify(envelope.read(out))[0] == "failure"):
                 continue
