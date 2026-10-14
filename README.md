@@ -3,7 +3,7 @@
 We gave DeepRead and other document AI APIs the same PDFs and the same JSON
 Schema, and counted how many values each one got right. Everything is here so
 you can run it yourself with your own API keys: the datasets, the schemas, the
-scoring code, the raw outputs, and one command per step.
+scoring code, and one command that repeats the whole comparison.
 
 **The benchmarks are not ours.** They are three public benchmarks made by
 other teams; we only run document AI APIs on them and publish the results.
@@ -21,34 +21,135 @@ label corrections we found, and the results. For LongExtractBench we also use
 micro1's own grader, unmodified. Full citations in
 [docs/datasets.md](docs/datasets.md#credits-and-citations).
 
-> **Status: internal draft.** The numbers below are **placeholders** until the
-> committed runs are in; `drbench report` regenerates them from `runs/`.
-> Do not share outside DeepRead until that is done.
+## Results — October 2026
 
-## Results
+**Accuracy = how many of the answer-key values the system got right**, averaged
+per document. 100% means every value in every document was correct. A document
+the system could not process counts as 0.
 
-**Accuracy = how many of the answer-key values the system got right.**
-100% means every value in every document was correct. A document the system
-could not process counts as all wrong.
-
-| Benchmark | DeepRead `extract` | DeepRead `deep-extract` | Reducto Deep Extract | LandingAI ADE |
+| System | DocILE (500 docs) | Kleister-Charity (40 docs) | LongExtractBench (20 docs) | Average |
 |---|---:|---:|---:|---:|
-| Kleister-Charity — 440 UK charity reports, 8 fields | 95%* | 95%* | 90%* | 87%* |
-| DocILE — 500 invoices and business documents, 33 fields | 95%* | 95%* | 90%* | 87%* |
-| LongExtractBench — 50 long reports (22 to 11,622 pages), tables | 95%* | 95%* | 90%* | 87%* |
+| **DeepRead extract** | 79.4% | 91.7% | 97.6% | **89.6%** |
+| Extend Operator | 75.0% | 91.7% | 99.6% | 88.8% |
+| DeepRead deep-extract | 83.3% | 87.7% | 94.5% | 88.5% |
+| Reducto Deep Extract | 72.3% | 91.0% | 94.9% | 86.1% |
+| Extend Performance | 68.6% | 89.2% | 77.5% | 78.4% |
+| LandingAI ADE | 72.4% | 89.8% | 70.8%\* | 77.7% |
+| Reducto Extract | 69.1% | 91.1% | 47.6% | 69.3% |
 
-\* placeholder, replaced by the committed run. Run date and vendor job ids
-are stored with every run in `runs/`.
+\* LandingAI returned 18 of the 20 LongExtractBench documents; the two it
+failed on (internal errors after four attempts) count as 0.
 
-## The three benchmarks
+Run on 13 October 2026, 2,614 pages per system, the same documents and the
+same schema for everyone. "DeepRead extract" is DeepRead's `extract` pipeline
+on its own OCR engine (`deepread:extract-selfhost` in this harness); the other
+systems are the vendors' self-serve APIs at their default settings, described
+in [docs/providers.md](docs/providers.md). `drbench short-run` repeats exactly
+this run.
 
-| Benchmark | What the documents are | Download |
-|---|---|---|
-| **Kleister-Charity** | Annual reports UK charities file with the Charity Commission. Multi-page scans. Fields: charity name and number, its street, town and postcode, report date, annual income and spending. From [applicaai/kleister-charity](https://github.com/applicaai/kleister-charity). | [huggingface.co/datasets/DeepRead/kleister-charity-dev0](https://huggingface.co/datasets/DeepRead/kleister-charity-dev0) |
-| **DocILE** | Invoices and similar business documents, 1–3 pages. 33 fields: ids, dates, vendor and customer names and addresses, amounts, tax details, bank details. From [rossumai/docile](https://github.com/rossumai/docile). | Free token from [docile.rossum.ai](https://docile.rossum.ai) (their terms do not allow us to host a copy) |
-| **LongExtractBench** | Long, table-heavy reports: statistical releases, 10-K/10-Q filings, clinical and regulatory reports. Each document has its own schema with large tables. From [micro1](https://huggingface.co/datasets/micro1-inc/longextract-bench-50). | [huggingface.co/datasets/DeepRead/longextract-bench-50](https://huggingface.co/datasets/DeepRead/longextract-bench-50) |
+## How we chose the documents
 
-Details, versions and licences: [docs/datasets.md](docs/datasets.md).
+We did not pick documents by hand. Each sample is cut by a fixed rule, decided
+before any system was run, and every system got the same files:
+
+- **DocILE**: no selection — all 500 documents of the validation split (636 pages).
+- **Kleister-Charity**: the first 40 of the 440 documents, in the order the
+  dataset itself lists them in `documents.txt` (1,143 pages). The list is
+  [`datasets/charity/sample-40.txt`](datasets/charity/sample-40.txt).
+- **LongExtractBench**: the 20 shortest of the 50 documents by page count
+  (835 pages). The full set is 19,528 pages and one document alone is 11,622,
+  which is what makes the full run cost what it does below. The list is
+  [`datasets/longextract/sample-20.txt`](datasets/longextract/sample-20.txt).
+
+The rules look at nothing but order and length, so they cannot favour anyone.
+Shorter documents are easier for every system alike.
+
+## What it costs
+
+The vendors bill their own accounts at list price; DeepRead's share is paid
+with the credits on your DeepRead account. Prices are the vendors' public
+list prices in October 2026 ([docs/providers.md](docs/providers.md)); each
+command prints this table for the systems you chose and asks before sending
+anything.
+
+| System | $ / 1k pages | Short run (2,614 pages) | Full run (30,803 pages) |
+|---|---:|---:|---:|
+| DeepRead extract | $15 | $39 | $462 |
+| DeepRead deep-extract | $35 | $91 | $1,078 |
+| Reducto Extract | $20 | $52 | $616 |
+| Reducto Deep Extract | $40 | $105 | $1,232 |
+| Extend Performance | $62.50 | $163 | $1,925 |
+| Extend Operator | $87.50 | $229 | $2,695 |
+| LandingAI ADE | $61 | $159 | $1,879 |
+| **All seven** | | **about $840** | **about $9,900** |
+
+So the short run is roughly **$800–900** across all vendor accounts, and the
+full run roughly **$8,300 on the vendors plus $1,500 of DeepRead credits**.
+New vendor accounts come with free credits that cover part of a short run.
+Page counts are from the PDFs themselves (DocILE 636; Kleister-Charity 10,639
+over 440 documents; LongExtractBench 19,528 over 50).
+
+## Run it yourself
+
+Requirements: Python 3.10+ and an API key for each system you want to run.
+Keys are read from the environment only.
+
+```bash
+git clone https://github.com/deepread-tech/deepread-public-benchmarks
+cd deepread-public-benchmarks
+pip install -e ".[dev]"
+
+export DEEPREAD_API_KEY=...        # https://app.deepread.tech  (dashboard → API keys)
+export REDUCTO_API_KEY=...         # https://studio.reducto.ai
+export EXTEND_API_KEY=...          # https://dashboard.extend.ai
+export VISION_AGENT_API_KEY=...    # https://ade.landing.ai
+export DOCILE_TOKEN=...            # your free token from https://docile.rossum.ai (see below)
+
+drbench short-run                  # our published run: 2,614 pages per system, about $840 at list price
+drbench full-run                   # every document: 30,803 pages per system, about $9,900 at list price
+```
+
+Each command downloads the datasets, sends every document through every
+system, grades the outputs, and ends with the table above built from your
+run. It shows the cost first and waits for a `y`. It is resumable: a document
+that already has an output is not sent again, so rerunning the same command
+continues an interrupted run. Useful options:
+
+```bash
+drbench short-run --dry-run                       # just the plan and the cost, nothing sent
+drbench short-run --systems reducto,deepread      # only the systems you have keys for
+drbench full-run --yes -j 8                       # no confirmation, 8 documents in flight per system
+```
+
+**DocILE needs your own token.** Its terms allow non-commercial research use
+only and forbid redistribution, so we cannot host a copy. Request a free token
+at [docile.rossum.ai](https://docile.rossum.ai), then either export
+`DOCILE_TOKEN` as above or run `drbench fetch docile --token <TOKEN>` first.
+Without it the commands explain this and run the other two benchmarks.
+
+### Step by step
+
+The two commands are built from four steps you can also run one at a time,
+for example to test one system on a handful of documents first:
+
+```bash
+drbench fetch charity                                   # 1.7 GB from Hugging Face
+drbench fetch longextract                               # 360 MB from Hugging Face
+drbench fetch docile --token <TOKEN>                    # your token from docile.rossum.ai
+
+drbench run --dataset charity --system reducto:extract --limit 5          # smoke test: 5 documents
+drbench run --dataset longextract --system extend:operator \
+            --ids datasets/longextract/sample-20.txt                      # our 20-document sample
+
+drbench grade --dataset longextract --ids datasets/longextract/sample-20.txt   # score (offline)
+drbench report                                                            # tables (offline)
+```
+
+Systems: `deepread:extract-selfhost`, `deepread:deep-extract` (also
+`deepread:extract` and `deepread:deep-extract-selfhost`), `reducto:extract`,
+`reducto:deep-extract`, `extend:performance`, `extend:operator`,
+`landingai:dpt-3-pro`. `drbench grade` scores saved outputs without any key,
+so a committed run can be re-scored by anyone.
 
 ## How we measure
 
@@ -59,73 +160,25 @@ Details, versions and licences: [docs/datasets.md](docs/datasets.md).
 3. The same code scores every output against the benchmark's answer key.
    Formatting differences (upper/lower case, `$1,200` vs `1200`, `3/4/2020`
    vs `2020-03-04`) are not errors; wrong or missing values are.
-4. Accuracy is the share of answer-key values the system got right.
+4. Accuracy is the share of a document's answer-key values the system got
+   right, averaged over the documents. LongExtractBench is scored by the
+   benchmark's own grader, where every row of every table counts.
 
-The full definitions — the exact matching rules per benchmark, how the
-answer-key errors we found are handled, and the benchmarks' own metrics
-(F1, precision, recall) which `drbench grade` also reports — are in
-[docs/methodology.md](docs/methodology.md).
-
-## Run it yourself
-
-Requirements: Python 3.10+. The runs call paid APIs: one system over the three
-benchmarks is about 32,000 pages (LongExtractBench is 19,500 of them). Prices
-and free credits per vendor: [docs/providers.md](docs/providers.md). Use
-`--limit` for a cheap smoke test.
-
-```bash
-git clone https://github.com/deepread-tech/deepread-public-benchmarks
-cd deepread-public-benchmarks
-pip install -e ".[dev]"
-
-# 1. keys: sign up with each vendor you want to run and export its key
-export DEEPREAD_API_KEY=...        # https://app.deepread.tech  (dashboard → API keys)
-export REDUCTO_API_KEY=...         # https://studio.reducto.ai
-export VISION_AGENT_API_KEY=...    # https://ade.landing.ai
-export EXTEND_API_KEY=...          # https://dashboard.extend.ai
-
-# 2. data
-drbench fetch charity                         # 1.7 GB from Hugging Face
-drbench fetch longextract                     # 360 MB from Hugging Face
-drbench fetch docile --token <TOKEN>          # your token from docile.rossum.ai
-
-# 3. run (paid; resumable — rerun the same command to continue)
-drbench run --dataset charity --system deepread:extract -j 4
-drbench run --dataset charity --system deepread:deep-extract -j 4
-drbench run --dataset charity --system reducto -j 4
-drbench run --dataset charity --system landingai -j 4
-drbench run --dataset longextract --system deepread --limit 5   # smoke test
-
-# a fixed sample instead of the whole benchmark (same file for run and grade)
-drbench run --dataset longextract --system extend --ids datasets/longextract/sample-20.txt
-drbench grade --dataset longextract --ids datasets/longextract/sample-20.txt
-
-# 4. score and show the table (offline)
-drbench grade --dataset charity
-drbench report
-```
-
-Systems: `deepread:extract`, `deepread:deep-extract` (and their
-`-selfhost` variants on DeepRead's self-hosted OCR engine), `reducto:extract`,
-`reducto:deep-extract`, `landingai:dpt-3-pro`, `extend:performance`,
-`extend:operator`. `drbench grade` on our committed `runs/` reproduces the
-table above without any key.
-
-Samples: `datasets/longextract/sample-20.txt` is the 20 shortest
-LongExtractBench documents (835 pages instead of 19,528) and
-`datasets/charity/sample-40.txt` the first 40 Kleister-Charity documents
-(1,143 pages). A table built from a sample says so in its heading.
+The exact matching rules per benchmark, how the answer-key errors we found are
+handled, and the benchmarks' own metrics (F1, precision, recall), which
+`drbench grade` also reports, are in [docs/methodology.md](docs/methodology.md).
 
 ## Repository layout
 
 ```
 datasets/<name>/         schema.json sent to every system, document lists, answer-key corrections
 scripts/                 build_hf_datasets.py — how the Hugging Face copies were assembled
-src/drbench/             fetch / run / grade / report
+src/drbench/             short-run / full-run, and the steps they are made of: fetch / run / grade / report
+  suite.py               the two runs: which documents, which systems, what they cost
   datasets/              one module per benchmark: download, answer key, scoring
   providers/             one adapter per API: deepread, reducto, landingai, extend
   graders/               micro1's LongExtractBench grader, vendored unmodified (MIT)
-runs/<dataset>/<system>/ raw outputs behind the table, plus scores.json
+runs/<dataset>/<system>/ raw outputs of a run, plus scores.json
 official/                DeepRead scored with each benchmark's own scorer, as a cross-check
 docs/                    methodology, datasets and licences, vendors and their APIs
 tests/
