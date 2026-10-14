@@ -1,7 +1,8 @@
 """`drbench short-run` and `drbench full-run`: our comparison, reproduced end to end.
 
 One command downloads the datasets, sends the same documents through every
-system, grades the outputs and prints the table. The **short run** is exactly
+system of the published comparison, grades the outputs and prints the table.
+The **short run** is exactly
 the run behind our published numbers: all 500 DocILE validation documents, the
 first 40 Kleister-Charity documents and the 20 shortest LongExtractBench
 documents, 2,614 pages per system. The **full run** is every document of the
@@ -27,19 +28,24 @@ class System:
     label: str  # how the table names it
     env_key: str
     price_per_page: float  # list price in USD, October 2026 (docs/providers.md)
+    default: bool = True  # part of the published comparison, so run unless --systems says otherwise
 
 
-# Every system we compared, in table order. The prices are what each vendor
-# listed in October 2026; DeepRead's is its list price too, paid in credits.
+# The systems of the published comparison, in table order, plus the ones a
+# `--systems` can add. DeepRead extract runs on DeepRead's own OCR engine
+# (`pipeline=extract-selfhost`), the engine the published numbers come from.
+# Prices are what each vendor listed in October 2026; DeepRead's is its list
+# price too, paid in credits.
 SYSTEMS: tuple[System, ...] = (
     System("deepread:extract-selfhost", "DeepRead extract", "DEEPREAD_API_KEY", 0.015),
-    System("deepread:deep-extract", "DeepRead deep-extract", "DEEPREAD_API_KEY", 0.035),
     System("reducto:extract", "Reducto Extract", "REDUCTO_API_KEY", 0.020),
     System("reducto:deep-extract", "Reducto Deep Extract", "REDUCTO_API_KEY", 0.040),
     System("extend:performance", "Extend Performance", "EXTEND_API_KEY", 0.0625),
     System("extend:operator", "Extend Operator", "EXTEND_API_KEY", 0.0875),
     System("landingai:dpt-3-pro", "LandingAI ADE", "VISION_AGENT_API_KEY", 0.061),
+    System("deepread:deep-extract", "DeepRead deep-extract", "DEEPREAD_API_KEY", 0.035, default=False),
 )
+DEFAULT_SYSTEMS: tuple[System, ...] = tuple(s for s in SYSTEMS if s.default)
 
 KEY_SOURCES = {
     "DEEPREAD_API_KEY": "https://app.deepread.tech (dashboard → API keys)",
@@ -87,10 +93,11 @@ def pages(plan: str) -> int:
 
 
 def systems_for(spec: str | None) -> list[System]:
-    """`--systems`: a comma-separated subset by id (`reducto:extract`) or by
-    provider (`reducto` = both Reducto modes); every system when not given."""
+    """`--systems`: a comma-separated list by id (`reducto:extract`) or by
+    provider (`reducto` = every Reducto mode, `deepread` = both DeepRead
+    pipelines); the published six when not given."""
     if not spec:
-        return list(SYSTEMS)
+        return list(DEFAULT_SYSTEMS)
     chosen: list[System] = []
     for token in (t.strip() for t in spec.split(",") if t.strip()):
         matches = [s for s in SYSTEMS if s.id == token or s.id.split(":")[0] == token]

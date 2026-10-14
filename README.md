@@ -31,7 +31,6 @@ the system could not process counts as 0.
 |---|---:|---:|---:|---:|
 | **DeepRead extract** | 79.4% | 91.7% | 97.6% | **89.6%** |
 | Extend Operator | 75.0% | 91.7% | 99.6% | 88.8% |
-| DeepRead deep-extract | 83.3% | 87.7% | 94.5% | 88.5% |
 | Reducto Deep Extract | 72.3% | 91.0% | 94.9% | 86.1% |
 | Extend Performance | 68.6% | 89.2% | 77.5% | 78.4% |
 | LandingAI ADE | 72.4% | 89.8% | 70.8%\* | 77.7% |
@@ -41,11 +40,11 @@ the system could not process counts as 0.
 failed on (internal errors after four attempts) count as 0.
 
 Run on 13 October 2026, 2,614 pages per system, the same documents and the
-same schema for everyone. "DeepRead extract" is DeepRead's `extract` pipeline
-on its own OCR engine (`deepread:extract-selfhost` in this harness); the other
-systems are the vendors' self-serve APIs at their default settings, described
-in [docs/providers.md](docs/providers.md). `drbench short-run` repeats exactly
-this run.
+same schema for everyone. DeepRead extract here runs on DeepRead's own OCR
+engine (`pipeline=extract-selfhost`), the engine the published numbers come
+from. The other systems are the vendors' self-serve APIs at their default
+settings, described in [docs/providers.md](docs/providers.md).
+`drbench short-run` repeats exactly this run.
 
 ## How we chose the documents
 
@@ -75,17 +74,17 @@ anything.
 | System | $ / 1k pages | Short run (2,614 pages) | Full run (30,803 pages) |
 |---|---:|---:|---:|
 | DeepRead extract | $15 | $39 | $462 |
-| DeepRead deep-extract | $35 | $91 | $1,078 |
 | Reducto Extract | $20 | $52 | $616 |
 | Reducto Deep Extract | $40 | $105 | $1,232 |
 | Extend Performance | $62.50 | $163 | $1,925 |
 | Extend Operator | $87.50 | $229 | $2,695 |
 | LandingAI ADE | $61 | $159 | $1,879 |
-| **All seven** | | **about $840** | **about $9,900** |
+| **All six** | | **about $750** | **about $8,800** |
 
-So the short run is roughly **$800–900** across all vendor accounts, and the
-full run roughly **$8,300 on the vendors plus $1,500 of DeepRead credits**.
-New vendor accounts come with free credits that cover part of a short run.
+So the short run is roughly **$750** at list price, about $710 of it on the
+vendor accounts, and the full run roughly **$8,800: $8,350 on the vendors
+plus $460 of DeepRead credits**. New vendor accounts come with free credits
+that cover part of a short run.
 Page counts are from the PDFs themselves (DocILE 636; Kleister-Charity 10,639
 over 440 documents; LongExtractBench 19,528 over 50).
 
@@ -105,13 +104,13 @@ export EXTEND_API_KEY=...          # https://dashboard.extend.ai
 export VISION_AGENT_API_KEY=...    # https://ade.landing.ai
 export DOCILE_TOKEN=...            # your free token from https://docile.rossum.ai (see below)
 
-drbench short-run                  # our published run: 2,614 pages per system, about $840 at list price
-drbench full-run                   # every document: 30,803 pages per system, about $9,900 at list price
+drbench short-run                  # our published run: 2,614 pages per system, about $750 at list price
+drbench full-run                   # every document: 30,803 pages per system, about $8,800 at list price
 ```
 
-Each command downloads the datasets, sends every document through every
-system, grades the outputs, and ends with the table above built from your
-run. It shows the cost first and waits for a `y`. It is resumable: a document
+Each command downloads the datasets, sends every document through the six
+systems of the table above, grades the outputs, and ends with that table
+built from your run. It shows the cost first and waits for a `y`. It is resumable: a document
 that already has an output is not sent again, so rerunning the same command
 continues an interrupted run. Useful options:
 
@@ -145,11 +144,14 @@ drbench grade --dataset longextract --ids datasets/longextract/sample-20.txt   #
 drbench report                                                            # tables (offline)
 ```
 
-Systems: `deepread:extract-selfhost`, `deepread:deep-extract` (also
-`deepread:extract` and `deepread:deep-extract-selfhost`), `reducto:extract`,
-`reducto:deep-extract`, `extend:performance`, `extend:operator`,
-`landingai:dpt-3-pro`. `drbench grade` scores saved outputs without any key,
-so a committed run can be re-scored by anyone.
+Systems in the published table, and what `short-run` and `full-run` run by
+default: `deepread:extract-selfhost`, `reducto:extract`, `reducto:deep-extract`,
+`extend:performance`, `extend:operator`, `landingai:dpt-3-pro`. DeepRead
+extract here runs on DeepRead's own OCR engine (`pipeline=extract-selfhost`),
+the engine the published numbers come from. Also available through `--systems`
+or `drbench run`: `deepread:deep-extract`, `deepread:extract` and
+`deepread:deep-extract-selfhost`. `drbench grade` scores saved outputs without
+any key, so a committed run can be re-scored by anyone.
 
 ## How we measure
 

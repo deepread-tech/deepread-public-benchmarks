@@ -44,7 +44,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--dataset", action="append", choices=list(DATASETS))
     p.add_argument("--labels", default="official", choices=["official", "corrected"])
 
-    from .suite import SYSTEMS, pages
+    from .suite import DEFAULT_SYSTEMS, SYSTEMS, pages
 
     for plan, blurb in (
         ("short", "the run behind our published numbers: all 500 DocILE documents, the first 40 "
@@ -55,15 +55,18 @@ def main(argv: list[str] | None = None) -> int:
             f"{plan}-run",
             help=f"{blurb} — {pages(plan):,} pages per system (paid API calls)",
             description=f"Reproduce our comparison end to end: {blurb}, {pages(plan):,} pages per system, "
-                        "through every system we compared. Downloads the datasets, sends every document, grades "
-                        "the outputs and prints the table. Prints the cost at list price and asks before sending "
-                        "anything. Resumable: rerun the same command to continue.",
-            epilog="Systems: " + ", ".join(s.id for s in SYSTEMS) + ". Keys are read from the environment "
-                   "(DEEPREAD_API_KEY, REDUCTO_API_KEY, EXTEND_API_KEY, VISION_AGENT_API_KEY); DocILE needs your "
-                   "own token from https://docile.rossum.ai (DOCILE_TOKEN or `drbench fetch docile --token`).",
+                        "through the six systems of the published table. Downloads the datasets, sends every "
+                        "document, grades the outputs and prints the table. Prints the cost at list price and asks "
+                        "before sending anything. Resumable: rerun the same command to continue.",
+            epilog="Systems run by default: " + ", ".join(s.id for s in DEFAULT_SYSTEMS) + ". Also available: "
+                   + ", ".join(s.id for s in SYSTEMS if not s.default) + ". DeepRead extract runs on DeepRead's own "
+                   "OCR engine (pipeline=extract-selfhost), the engine the published numbers come from. Keys are read "
+                   "from the environment (DEEPREAD_API_KEY, REDUCTO_API_KEY, EXTEND_API_KEY, VISION_AGENT_API_KEY); "
+                   "DocILE needs your own token from https://docile.rossum.ai (DOCILE_TOKEN or `drbench fetch docile "
+                   "--token`).",
         )
-        p.add_argument("--systems", help="comma-separated subset, by id (reducto:extract) or provider (reducto); "
-                       "default: all " + str(len(SYSTEMS)))
+        p.add_argument("--systems", help="comma-separated list, by id (reducto:extract) or provider (reducto); "
+                       f"default: the {len(DEFAULT_SYSTEMS)} systems of the published table")
         p.add_argument("--yes", action="store_true", help="do not ask before spending")
         p.add_argument("--dry-run", action="store_true", help="print the plan and the cost estimate, send nothing")
         p.add_argument("-j", "--concurrency", type=int, default=4, help="documents in flight per system (default 4)")

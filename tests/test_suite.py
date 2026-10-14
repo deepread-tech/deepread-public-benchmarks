@@ -10,7 +10,9 @@ import pytest
 
 from drbench import cli, envelope, suite
 from drbench.datasets.base import Column, Doc
-from drbench.suite import PLANS, SYSTEMS, cost_table, describe, estimate, missing_keys, pages, systems_for
+from drbench.suite import (
+    DEFAULT_SYSTEMS, PLANS, SYSTEMS, cost_table, describe, estimate, missing_keys, pages, systems_for,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 ALL_KEYS = ("DEEPREAD_API_KEY", "REDUCTO_API_KEY", "EXTEND_API_KEY", "VISION_AGENT_API_KEY")
@@ -35,18 +37,26 @@ def test_the_plans_are_the_documents_we_ran():
 def test_cost_is_pages_times_list_price():
     deepread = next(s for s in SYSTEMS if s.id == "deepread:extract-selfhost")
     assert dict(estimate("short", [deepread]))[deepread] == pytest.approx(0.015 * 2_614)
-    total_short = sum(cost for _, cost in estimate("short", list(SYSTEMS)))
-    total_full = sum(cost for _, cost in estimate("full", list(SYSTEMS)))
-    assert 800 < total_short < 900  # "about $840"
-    assert 9_000 < total_full < 10_500  # "about $8,300 on the vendors plus DeepRead's credits"
-    vendors = [s for s in SYSTEMS if not s.id.startswith("deepread")]
-    assert 8_000 < sum(cost for _, cost in estimate("full", vendors)) < 8_600
-    table = cost_table("short", list(SYSTEMS))
-    assert "| DeepRead extract | $15 | $39 |" in table and "**$839**" in table
+    total_short = sum(cost for _, cost in estimate("short", list(DEFAULT_SYSTEMS)))
+    total_full = sum(cost for _, cost in estimate("full", list(DEFAULT_SYSTEMS)))
+    assert total_short == pytest.approx(747.6, abs=0.1)  # "about $750"
+    assert total_full == pytest.approx(8_809.7, abs=0.1)  # "about $8,800"
+    vendors = [s for s in DEFAULT_SYSTEMS if not s.id.startswith("deepread")]
+    assert sum(cost for _, cost in estimate("full", vendors)) == pytest.approx(8_347.6, abs=0.1)
+    table = cost_table("short", list(DEFAULT_SYSTEMS))
+    assert "| DeepRead extract | $15 | $39 |" in table and "**$748**" in table
+    assert "DeepRead deep-extract" not in table
+
+
+def test_the_published_six_run_by_default_and_deep_extract_is_opt_in():
+    assert [s.id for s in systems_for(None)] == [
+        "deepread:extract-selfhost", "reducto:extract", "reducto:deep-extract",
+        "extend:performance", "extend:operator", "landingai:dpt-3-pro"]
+    assert [s.id for s in systems_for("deepread:deep-extract")] == ["deepread:deep-extract"]
+    assert [s.id for s in systems_for("deepread")] == ["deepread:extract-selfhost", "deepread:deep-extract"]
 
 
 def test_systems_subset_by_id_or_provider():
-    assert systems_for(None) == list(SYSTEMS)
     assert [s.id for s in systems_for("reducto")] == ["reducto:extract", "reducto:deep-extract"]
     assert [s.id for s in systems_for("extend:operator, deepread:extract-selfhost")] == [
         "extend:operator", "deepread:extract-selfhost"]
@@ -57,7 +67,7 @@ def test_systems_subset_by_id_or_provider():
 def test_missing_keys_are_named(monkeypatch):
     for key in ALL_KEYS:
         monkeypatch.delenv(key, raising=False)
-    assert missing_keys(list(SYSTEMS)) == sorted(ALL_KEYS)
+    assert missing_keys(list(DEFAULT_SYSTEMS)) == sorted(ALL_KEYS)
     monkeypatch.setenv("REDUCTO_API_KEY", "x")
     assert missing_keys(systems_for("reducto")) == []
     assert "DEEPREAD_API_KEY" in missing_keys(systems_for("deepread,reducto"))
@@ -86,7 +96,7 @@ def test_declining_the_confirmation_sends_nothing(monkeypatch):
     for key in ALL_KEYS:
         monkeypatch.setenv(key, "x")
     monkeypatch.setattr(suite, "make", lambda system: pytest.fail("a provider was built after 'no'"))
-    assert suite.sweep("short", list(SYSTEMS), Path("data"), Path("runs"), ask=lambda prompt: "n") == 1
+    assert suite.sweep("short", list(DEFAULT_SYSTEMS), Path("data"), Path("runs"), ask=lambda prompt: "n") == 1
 
 
 class FakeDataset:
