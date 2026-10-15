@@ -102,11 +102,12 @@ Shorter documents are easier for every system alike.
 
 ## What it costs
 
-The vendors bill their own accounts at list price; DeepRead's share is paid
-with the credits on your DeepRead account. Prices are the vendors' public
-list prices in October 2026 ([docs/providers.md](docs/providers.md)); each
-command prints this table for the systems you chose and asks before sending
-anything.
+Every price is what a self-serve customer pays per 1,000 pages. The vendors
+bill their own accounts at their self-serve list rate, which is what they
+charged us for the published run; DeepRead's share is its list price, paid
+with the credits on your DeepRead account. Prices are as of October 2026
+([docs/providers.md](docs/providers.md)); each command prints this table for
+the systems you chose and asks before sending anything.
 
 | System | $ / 1k pages | Short run (2,614 pages) | Full run (30,803 pages) |
 |---|---:|---:|---:|
