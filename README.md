@@ -1,9 +1,6 @@
 # Document extraction benchmarks
 
-[![Code licence: MIT](https://img.shields.io/badge/code-MIT-green)](LICENSE)
-[![Results as of 16 Oct 2026](https://img.shields.io/badge/results-16%20Oct%202026-blue)](#results)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](pyproject.toml)
-[![Live leaderboard](https://img.shields.io/badge/live%20page-deepread.tech%2Fbenchmarks-black)](https://deepread.tech/benchmarks)
+Results as of 16 October 2026 · also at [deepread.tech/benchmarks](https://deepread.tech/benchmarks) · code MIT · Python 3.10+
 
 Seven document-extraction APIs, the same PDFs, the same JSON Schema, three
 public benchmarks. We count how many answer-key values each API got right and
