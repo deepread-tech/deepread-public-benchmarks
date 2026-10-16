@@ -55,11 +55,13 @@ def main(argv: list[str] | None = None) -> int:
             f"{plan}-run",
             help=f"{blurb} — {pages(plan):,} pages per system (paid API calls)",
             description=f"Reproduce our comparison end to end: {blurb}, {pages(plan):,} pages per system, "
-                        "through the six systems of the published table. Downloads the datasets, sends every "
-                        "document, grades the outputs and prints the table. Prints the cost at list price and asks "
-                        "before sending anything. Resumable: rerun the same command to continue.",
-            epilog="Systems run by default: " + ", ".join(s.id for s in DEFAULT_SYSTEMS) + ". Also available: "
-                   + ", ".join(s.id for s in SYSTEMS if not s.default) + ". DeepRead extract runs on DeepRead's own "
+                        f"through the {len(DEFAULT_SYSTEMS)} systems of the published table. Downloads the datasets, "
+                        "sends every document, grades the outputs and prints the table. Prints the cost at list price "
+                        "and asks before sending anything. Resumable: rerun the same command to continue.",
+            epilog="Systems run by default: " + ", ".join(s.id for s in DEFAULT_SYSTEMS)
+                   + (". Also available: " + ", ".join(s.id for s in SYSTEMS if not s.default)
+                      if any(not s.default for s in SYSTEMS) else "")
+                   + ". DeepRead extract runs on DeepRead's own "
                    "OCR engine (pipeline=extract-selfhost), the engine the published numbers come from. Keys are read "
                    "from the environment (DEEPREAD_API_KEY, REDUCTO_API_KEY, EXTEND_API_KEY, VISION_AGENT_API_KEY); "
                    "DocILE needs your own token from https://docile.rossum.ai (DOCILE_TOKEN or `drbench fetch docile "

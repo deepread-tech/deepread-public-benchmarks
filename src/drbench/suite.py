@@ -38,12 +38,12 @@ class System:
 # price too, paid in credits.
 SYSTEMS: tuple[System, ...] = (
     System("deepread:extract-selfhost", "DeepRead extract", "DEEPREAD_API_KEY", 0.015),
+    System("deepread:deep-extract", "DeepRead deep-extract", "DEEPREAD_API_KEY", 0.035),
     System("reducto:extract", "Reducto Extract", "REDUCTO_API_KEY", 0.020),
     System("reducto:deep-extract", "Reducto Deep Extract", "REDUCTO_API_KEY", 0.040),
     System("extend:performance", "Extend Performance", "EXTEND_API_KEY", 0.0625),
     System("extend:operator", "Extend Operator", "EXTEND_API_KEY", 0.0875),
     System("landingai:dpt-3-pro", "LandingAI ADE", "VISION_AGENT_API_KEY", 0.061),
-    System("deepread:deep-extract", "DeepRead deep-extract", "DEEPREAD_API_KEY", 0.035, default=False),
 )
 DEFAULT_SYSTEMS: tuple[System, ...] = tuple(s for s in SYSTEMS if s.default)
 
