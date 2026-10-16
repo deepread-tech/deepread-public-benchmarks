@@ -1,6 +1,9 @@
 # Document extraction benchmarks
 
-Results as of 16 October 2026 · also at [deepread.tech/benchmarks](https://deepread.tech/benchmarks) · code MIT · Python 3.10+
+[![Results: October 2026](https://img.shields.io/badge/results-October%202026-0f766e?style=flat-square)](#results)
+[![Live page: deepread.tech/benchmarks](https://img.shields.io/badge/live%20page-deepread.tech%2Fbenchmarks-0f766e?style=flat-square)](https://deepread.tech/benchmarks)
+[![Code: MIT](https://img.shields.io/badge/code-MIT-0f766e?style=flat-square)](LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-0f766e?style=flat-square)](pyproject.toml)
 
 Seven document-extraction APIs, the same PDFs, the same JSON Schema, three
 public benchmarks. We count how many answer-key values each API got right and
@@ -25,7 +28,7 @@ micro1. Credits and licences are in
 
 **Accuracy = how many of the answer-key values the system got right**, averaged
 per document. 100 means every value in every document was right. A document
-the system could not process counts as 0. Results as of **16 October 2026**.
+the system could not process counts as 0. Results from the **October 2026** run.
 
 | System | DocILE (500 docs) | Kleister-Charity (40 docs) | LongExtractBench (20 docs) | Average |
 |---|---:|---:|---:|---:|
@@ -46,8 +49,8 @@ What is behind the numbers:
 - **Same input for everyone.** 2,614 pages per system, the same documents, the
   same schema, nothing tuned per vendor. The documents were chosen by a fixed
   rule before anyone was run, see [How we chose the documents](#how-we-chose-the-documents).
-- **When.** The vendors ran on 13 October 2026 on their self-serve APIs at
-  default settings. DeepRead's two rows were rerun on 15 and 16 October after
+- **When.** The vendors ran in October 2026 on their self-serve APIs at
+  default settings. DeepRead's two rows were rerun later that month after
   accuracy fixes, on the same documents. Every system was then scored with the
   same scorer settings.
 - **Prices.** DeepRead extract is $15 per 1,000 pages, DeepRead deep-extract
@@ -256,7 +259,7 @@ is what makes the full run cost what it does.
 
 ## Re-score our outputs, no key needed
 
-Every output of the 13 October run on Kleister-Charity and LongExtractBench is
+Every output of the October 2026 run on Kleister-Charity and LongExtractBench is
 committed under [`runs/`](runs/), one file per document and system, so anyone
 can re-score it offline:
 
@@ -288,10 +291,10 @@ The ranking is close either way. Reducto Extract's LongExtractBench score is
 the rows, our scorer credited it with more than the strict "every missed row
 counts as wrong" rule gives.
 
-The committed DeepRead outputs are the 13 October `extract` run (97.6 on
-LongExtractBench, 91.7 on Kleister-Charity by our scorer). The 15 and 16
-October reruns behind the table at the top, and the deep-extract outputs, are
-not yet committed. `scripts/import_oct2026_run.py` documents how `runs/` was
+The committed DeepRead outputs are the first October `extract` run (97.6 on
+LongExtractBench, 91.7 on Kleister-Charity by our scorer). The later reruns
+behind the table at the top, and the deep-extract outputs, are not yet
+committed. `scripts/import_oct2026_run.py` documents how `runs/` was
 assembled.
 
 ## Datasets, credits and licences
@@ -314,11 +317,11 @@ BibTeX entries and what each system receives are in
 
 ## Results history
 
-- **16 October 2026.** DeepRead deep-extract added to the table and to the
-  default run. DeepRead's two rows rerun after accuracy fixes. Every vendor's
-  DocILE and Kleister-Charity outputs re-scored with the same scorer settings
-  as ours, which raised each vendor's numbers by 1 to 3 points.
-- **13 October 2026.** First published run: six systems, 2,614 pages each.
+- **October 2026, current table.** DeepRead deep-extract added to the table
+  and to the default run. DeepRead's two rows rerun after accuracy fixes. Every
+  vendor's DocILE and Kleister-Charity outputs re-scored with the same scorer
+  settings as ours, which raised each vendor's numbers by 1 to 3 points.
+- **October 2026, first table.** Six systems, 2,614 pages each.
 
 ## Repository layout
 
