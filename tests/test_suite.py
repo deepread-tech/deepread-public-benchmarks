@@ -39,18 +39,18 @@ def test_cost_is_pages_times_list_price():
     assert dict(estimate("short", [deepread]))[deepread] == pytest.approx(0.015 * 2_614)
     total_short = sum(cost for _, cost in estimate("short", list(DEFAULT_SYSTEMS)))
     total_full = sum(cost for _, cost in estimate("full", list(DEFAULT_SYSTEMS)))
-    assert total_short == pytest.approx(747.6, abs=0.1)  # "about $750"
-    assert total_full == pytest.approx(8_809.7, abs=0.1)  # "about $8,800"
+    assert total_short == pytest.approx(839.1, abs=0.1)  # "about $840"
+    assert total_full == pytest.approx(9_887.8, abs=0.1)  # "about $9,900"
     vendors = [s for s in DEFAULT_SYSTEMS if not s.id.startswith("deepread")]
     assert sum(cost for _, cost in estimate("full", vendors)) == pytest.approx(8_347.6, abs=0.1)
     table = cost_table("short", list(DEFAULT_SYSTEMS))
-    assert "| DeepRead extract | $15 | $39 |" in table and "**$748**" in table
-    assert "DeepRead deep-extract" not in table
+    assert "| DeepRead extract | $15 | $39 |" in table and "**$839**" in table
+    assert "| DeepRead deep-extract | $35 | $91 |" in table
 
 
-def test_the_published_six_run_by_default_and_deep_extract_is_opt_in():
+def test_the_published_seven_run_by_default():
     assert [s.id for s in systems_for(None)] == [
-        "deepread:extract-selfhost", "reducto:extract", "reducto:deep-extract",
+        "deepread:extract-selfhost", "deepread:deep-extract", "reducto:extract", "reducto:deep-extract",
         "extend:performance", "extend:operator", "landingai:dpt-3-pro"]
     assert [s.id for s in systems_for("deepread:deep-extract")] == ["deepread:deep-extract"]
     assert [s.id for s in systems_for("deepread")] == ["deepread:extract-selfhost", "deepread:deep-extract"]
